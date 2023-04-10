@@ -3,6 +3,7 @@ interface Props {
   id: number;
   label: string;
   type: string;
+  value: string;
 }
 
 export default function Field(props: Props) {
@@ -23,6 +24,7 @@ function RegularInput(props: Props) {
       </label>
       <div className='flex mt-2'>
         <input
+          value={props.value}
           type={props.type}
           id={props.label}
           className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'

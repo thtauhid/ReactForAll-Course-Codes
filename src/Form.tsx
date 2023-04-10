@@ -1,36 +1,48 @@
 import { useState } from "react";
 import Field from "./Field";
+interface FormProps {
+  id: number;
+  label: string;
+  type: string;
+  value: string;
+}
 
-const formFields = [
+const formFields: FormProps[] = [
   {
     id: 1,
     label: "First Name",
     type: "text",
+    value: "",
   },
   {
     id: 2,
     label: "Last Name",
     type: "text",
+    value: "",
   },
   {
     id: 3,
     label: "Email",
     type: "email",
+    value: "",
   },
   {
     id: 4,
     label: "Date of Birth",
     type: "date",
+    value: "",
   },
   {
     id: 5,
     label: "Phone Number",
     type: "tel",
+    value: "",
   },
   {
     id: 6,
     label: "Submit",
     type: "submit",
+    value: "",
   },
 ];
 
@@ -51,6 +63,7 @@ export default function Form() {
         id: Number(new Date()),
         label: newFieldLabel,
         type: newFieldType,
+        value: "",
       },
     ]);
 
