@@ -38,12 +38,6 @@ const formFields: FormProps[] = [
     type: "tel",
     value: "",
   },
-  {
-    id: 6,
-    label: "Submit",
-    type: "submit",
-    value: "",
-  },
 ];
 
 export default function Form() {
@@ -77,6 +71,13 @@ export default function Form() {
         <Field key={field.id} {...field} deleteFieldCB={deleteFieldCB} />
       ))}
 
+      <button
+        type='submit'
+        className='block w-full mt-4 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+      >
+        Submit
+      </button>
+
       <div className='mt-4 border border-stone-500'></div>
 
       <div className='mt-4'>
@@ -93,7 +94,6 @@ export default function Form() {
           <option value='number'>Number</option>
           <option value='password'>Password</option>
           <option value='textarea'>Textarea</option>
-          <option value='submit'>Submit</option>
         </select>
       </div>
 

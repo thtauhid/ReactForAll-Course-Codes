@@ -7,9 +7,7 @@ interface Props {
 }
 
 export default function Field(props: Props) {
-  if (props.type === "submit") {
-    return <SubmitButton {...props} />;
-  } else if (props.type === "textarea") {
+  if (props.type === "textarea") {
     return <Textarea {...props} />;
   } else {
     return <RegularInput {...props} />;
@@ -32,20 +30,6 @@ function RegularInput(props: Props) {
         <DeleteButton {...props} />
       </div>
     </>
-  );
-}
-
-function SubmitButton(props: Props) {
-  return (
-    <div className='flex mt-4'>
-      <button
-        type='submit'
-        className='block w-full p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-      >
-        {props.label}
-      </button>
-      <DeleteButton {...props} />
-    </div>
   );
 }
 
