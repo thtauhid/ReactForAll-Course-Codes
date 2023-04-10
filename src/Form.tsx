@@ -65,10 +65,40 @@ export default function Form() {
     setNewFieldType("text");
   };
 
+  const handleFieldChangeCB = (id: number, value: string) => {
+    setFields(
+      fields.map((field) => {
+        if (field.id === id) {
+          return {
+            ...field,
+            value,
+          };
+        }
+        return field;
+      })
+    );
+  };
+
+  const clearFields = () => {
+    setFields(
+      fields.map((field) => {
+        return {
+          ...field,
+          value: "",
+        };
+      })
+    );
+  };
+
   return (
     <>
       {fields.map((field) => (
-        <Field key={field.id} {...field} deleteFieldCB={deleteFieldCB} />
+        <Field
+          key={field.id}
+          {...field}
+          deleteFieldCB={deleteFieldCB}
+          handleFieldChangeCB={handleFieldChangeCB}
+        />
       ))}
 
       <button
@@ -76,6 +106,14 @@ export default function Form() {
         className='block w-full mt-4 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
       >
         Submit
+      </button>
+
+      <button
+        type='button'
+        className='block w-full mt-4 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
+        onClick={clearFields}
+      >
+        Clear Fields
       </button>
 
       <div className='mt-4 border border-stone-500'></div>

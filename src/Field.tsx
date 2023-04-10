@@ -1,9 +1,10 @@
 interface Props {
-  deleteFieldCB(id: number): void;
   id: number;
   label: string;
   type: string;
   value: string;
+  deleteFieldCB(id: number): void;
+  handleFieldChangeCB(id: number, value: string): void;
 }
 
 export default function Field(props: Props) {
@@ -23,6 +24,9 @@ function RegularInput(props: Props) {
       <div className='flex mt-2'>
         <input
           value={props.value}
+          onChange={(e) => {
+            props.handleFieldChangeCB(props.id, e.target.value);
+          }}
           type={props.type}
           id={props.label}
           className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
