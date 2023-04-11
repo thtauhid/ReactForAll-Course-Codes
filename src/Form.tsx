@@ -1,98 +1,115 @@
 import { useState } from "react";
 import Field from "./Field";
-interface FormProps {
-  id: number;
-  label: string;
-  type: string;
-  value: string;
-}
 
-const formFields: FormProps[] = [
-  {
-    id: 1,
-    label: "First Name",
-    type: "text",
-    value: "",
-  },
-  {
-    id: 2,
-    label: "Last Name",
-    type: "text",
-    value: "",
-  },
-  {
-    id: 3,
-    label: "Email",
-    type: "email",
-    value: "",
-  },
-  {
-    id: 4,
-    label: "Date of Birth",
-    type: "date",
-    value: "",
-  },
-  {
-    id: 5,
-    label: "Phone Number",
-    type: "tel",
-    value: "",
-  },
-];
+import { FormFields, FormValues } from "./types";
+
+const formInitialData: FormValues = {
+  id: Number(new Date()),
+  title: "Untitled Form",
+  fields: [
+    {
+      id: 1,
+      label: "First Name",
+      type: "text",
+      value: "",
+    },
+    {
+      id: 2,
+      label: "Last Name",
+      type: "text",
+      value: "",
+    },
+    {
+      id: 3,
+      label: "Email",
+      type: "email",
+      value: "",
+    },
+    {
+      id: 4,
+      label: "Date of Birth",
+      type: "date",
+      value: "",
+    },
+    {
+      id: 5,
+      label: "Phone Number",
+      type: "tel",
+      value: "",
+    },
+  ],
+};
 
 export default function Form() {
-  const [fields, setFields] = useState(formFields);
+  const [formData, setFormData] = useState<FormValues>(formInitialData);
 
   const deleteFieldCB = (id: number) => {
-    setFields(fields.filter((field) => field.id !== id));
+    setFormData({
+      ...formData,
+      fields: formData.fields.filter((field) => field.id !== id),
+    });
   };
 
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
 
-  const handleSubmit = () => {
-    setFields([
-      ...fields,
-      {
-        id: Number(new Date()),
-        label: newFieldLabel,
-        type: newFieldType,
-        value: "",
-      },
-    ]);
+  const addFormField = () => {
+    setFormData({
+      ...formData,
+      fields: [
+        ...formData.fields,
+        {
+          id: formData.fields.length + 1,
+          label: newFieldLabel,
+          type: newFieldType,
+          value: "",
+        },
+      ],
+    });
 
     setNewFieldLabel("");
     setNewFieldType("text");
   };
 
   const handleFieldChangeCB = (id: number, value: string) => {
-    setFields(
-      fields.map((field) => {
+    setFormData({
+      ...formData,
+      fields: formData.fields.map((field) => {
         if (field.id === id) {
           return {
             ...field,
             value,
           };
         }
+
         return field;
-      })
-    );
+      }),
+    });
   };
 
   const clearFields = () => {
-    setFields(
-      fields.map((field) => {
-        return {
-          ...field,
-          value: "",
-        };
-      })
-    );
+    setFormData({
+      ...formData,
+      fields: formData.fields.map((field) => ({
+        ...field,
+        value: "",
+      })),
+    });
   };
 
   return (
     <>
-      {fields.map((field) => (
+      <input
+        type='text'
+        className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 w-full text-3xl '
+        placeholder='Form Title'
+        value={formData.title}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+      />
+
+      <div className='mt-4 border border-stone-500'></div>
+
+      {formData.fields.map((field) => (
         <Field
           key={field.id}
           {...field}
@@ -100,28 +117,10 @@ export default function Form() {
           handleFieldChangeCB={handleFieldChangeCB}
         />
       ))}
-
-      <button
-        type='submit'
-        className='block w-full mt-4 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-      >
-        Submit
-      </button>
-
-      <button
-        type='button'
-        className='block w-full mt-4 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
-        onClick={clearFields}
-      >
-        Clear Fields
-      </button>
-
-      <div className='mt-4 border border-stone-500'></div>
-
-      <div className='mt-4'>
+      <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
         <select
           id='type'
-          className='p-2 w-full border bg-white border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+          className='flex-1 mr-1 p-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
           value={newFieldType}
           onChange={(e) => setNewFieldType(e.target.value)}
         >
@@ -133,20 +132,18 @@ export default function Form() {
           <option value='password'>Password</option>
           <option value='textarea'>Textarea</option>
         </select>
-      </div>
 
-      <div className='flex mt-4'>
         <input
           type='text'
-          className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+          className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
           placeholder='Label'
           value={newFieldLabel}
           onChange={(e) => setNewFieldLabel(e.target.value)}
         />
         <button
           type='button'
-          className='ml-2 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
-          onClick={handleSubmit}
+          className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+          onClick={addFormField}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -162,6 +159,25 @@ export default function Form() {
               d='M12 4.5v15m7.5-7.5h-15'
             />
           </svg>
+        </button>
+      </div>
+
+      <div className='mt-4 border border-stone-500'></div>
+
+      <div className='flex mt-4'>
+        <button
+          type='submit'
+          className='flex-1 mr-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
+        >
+          Save
+        </button>
+
+        <button
+          type='button'
+          className='flex-1 ml-1 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
+          onClick={clearFields}
+        >
+          Clear Fields
         </button>
       </div>
     </>
