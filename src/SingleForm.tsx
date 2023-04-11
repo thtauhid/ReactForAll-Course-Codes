@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Field from "./Field";
 
-import { FormFields, FormValues } from "./types";
+import { FormFields, Form } from "./types";
 
-const formInitialData: FormValues = {
+const formInitialData: Form = {
   id: Number(new Date()),
   title: "Untitled Form",
   fields: [
@@ -25,23 +25,14 @@ const formInitialData: FormValues = {
       type: "email",
       value: "",
     },
-    {
-      id: 4,
-      label: "Date of Birth",
-      type: "date",
-      value: "",
-    },
-    {
-      id: 5,
-      label: "Phone Number",
-      type: "tel",
-      value: "",
-    },
   ],
 };
 
-export default function Form() {
-  const [formData, setFormData] = useState<FormValues>(formInitialData);
+export default function SingleForm(props: {
+  id: number;
+  closeFormCB: () => void;
+}) {
+  const [formData, setFormData] = useState<Form>(formInitialData);
 
   const deleteFieldCB = (id: number) => {
     setFormData({
@@ -167,17 +158,24 @@ export default function Form() {
       <div className='flex mt-4'>
         <button
           type='submit'
-          className='flex-1 mr-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
+          className='flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
         >
           Save
         </button>
 
         <button
           type='button'
-          className='flex-1 ml-1 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
+          className='flex-1 mx-2 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
           onClick={clearFields}
         >
           Clear Fields
+        </button>
+        <button
+          type='button'
+          className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+          onClick={props.closeFormCB}
+        >
+          Close
         </button>
       </div>
     </>

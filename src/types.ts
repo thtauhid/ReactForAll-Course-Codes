@@ -5,7 +5,7 @@ export interface FormFields {
     value: string;
 }
 
-export interface FormValues {
+export interface Form {
     id: number;
     title: string,
     fields: FormFields[];

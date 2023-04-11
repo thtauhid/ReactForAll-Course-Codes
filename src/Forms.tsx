@@ -1,20 +1,97 @@
-export default function Forms() {
+import { useState } from "react";
+import { Form } from "./types";
+
+const sampleForm = [
+  {
+    id: 1,
+    title: "A form with 4 fields",
+    fields: [
+      {
+        id: 1,
+        label: "First name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 2,
+        label: "Last name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 3,
+        label: "Email",
+        type: "email",
+        value: "",
+      },
+      {
+        id: 4,
+        label: "Password",
+        type: "password",
+        value: "",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Personal Data Collection Form",
+    fields: [
+      {
+        id: 1,
+        label: "First name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 2,
+        label: "Last name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 3,
+        label: "Email",
+        type: "email",
+        value: "",
+      },
+      {
+        id: 4,
+        label: "Password",
+        type: "password",
+        value: "",
+      },
+    ],
+  },
+];
+
+export default function Forms(props: { selectFormCB: (id: number) => void }) {
+  const [forms, setForms] = useState<Form[]>(sampleForm);
+
   return (
     <>
-      <FormCard />
-      <FormCard />
-      <FormCard />
-      <FormCard />
+      {forms.map((form) => (
+        <FormCard
+          key={form.id}
+          formData={form}
+          selectFormCB={props.selectFormCB}
+        />
+      ))}
     </>
   );
 }
 
-function FormCard() {
+function FormCard(props: {
+  formData: Form;
+  selectFormCB: (id: number) => void;
+}) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
-      <h2 className='text-xl'>Form title</h2>
+      <h2 className='text-xl'>{props.formData.title}</h2>
       <div>
-        <button className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white'>
+        <button
+          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white'
+          onClick={() => props.selectFormCB(props.formData.id)}
+        >
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
