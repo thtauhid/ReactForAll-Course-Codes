@@ -45,6 +45,10 @@ function Textarea(props: Props) {
       </label>
       <div className='flex mt-2'>
         <textarea
+          value={props.value}
+          onChange={(e) => {
+            props.handleFieldChangeCB(props.id, e.target.value);
+          }}
           id={props.label}
           className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
         ></textarea>
