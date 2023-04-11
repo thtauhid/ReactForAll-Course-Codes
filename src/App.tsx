@@ -4,7 +4,7 @@ import Form from "./Form";
 function App() {
   return (
     <AppContainer>
-      <div className='p-4 mx-auto bg-white shadow-lg rounded-xl'>
+      <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl'>
         <Header title='Level 2: React State' />
         <Form />
       </div>
