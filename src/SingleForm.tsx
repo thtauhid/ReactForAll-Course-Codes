@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Field from "./Field";
 
-import { FormFields, Form } from "./types";
+import { Form } from "./types";
 
 const formInitialData: Form = {
   id: Number(new Date()),
@@ -13,18 +13,6 @@ const formInitialData: Form = {
       type: "text",
       value: "",
     },
-    {
-      id: 2,
-      label: "Last Name",
-      type: "text",
-      value: "",
-    },
-    {
-      id: 3,
-      label: "Email",
-      type: "email",
-      value: "",
-    },
   ],
 };
 
@@ -32,7 +20,40 @@ export default function SingleForm(props: {
   id: number;
   closeFormCB: () => void;
 }) {
+  const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
+
+  useEffect(() => {
+    const data = localStorage.getItem("forms");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      setForms(dataJSON);
+      console.table(dataJSON);
+
+      // find the corresponding form of the id
+      const form = dataJSON.find((form: Form) => form.id === props.id);
+      if (form) {
+        setFormData(form);
+      }
+    }
+  }, [props.id]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("forms");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      const newData = dataJSON.map((form: Form) => {
+        if (form.id === formData.id) {
+          return formData;
+        }
+
+        return form;
+      });
+
+      localStorage.setItem("forms", JSON.stringify(newData));
+      setForms(newData);
+    }
+  }, [formData]);
 
   const deleteFieldCB = (id: number) => {
     setFormData({

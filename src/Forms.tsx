@@ -1,71 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form } from "./types";
 
-const sampleForm = [
-  {
-    id: 1,
-    title: "A form with 4 fields",
-    fields: [
-      {
-        id: 1,
-        label: "First name",
-        type: "text",
-        value: "",
-      },
-      {
-        id: 2,
-        label: "Last name",
-        type: "text",
-        value: "",
-      },
-      {
-        id: 3,
-        label: "Email",
-        type: "email",
-        value: "",
-      },
-      {
-        id: 4,
-        label: "Password",
-        type: "password",
-        value: "",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Personal Data Collection Form",
-    fields: [
-      {
-        id: 1,
-        label: "First name",
-        type: "text",
-        value: "",
-      },
-      {
-        id: 2,
-        label: "Last name",
-        type: "text",
-        value: "",
-      },
-      {
-        id: 3,
-        label: "Email",
-        type: "email",
-        value: "",
-      },
-      {
-        id: 4,
-        label: "Password",
-        type: "password",
-        value: "",
-      },
-    ],
-  },
-];
-
 export default function Forms(props: { selectFormCB: (id: number) => void }) {
-  const [forms, setForms] = useState<Form[]>(sampleForm);
+  const [forms, setForms] = useState<Form[]>([]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("forms");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      setForms(dataJSON);
+    }
+  }, []);
 
   return (
     <>
