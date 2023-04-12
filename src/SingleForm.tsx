@@ -20,15 +20,13 @@ export default function SingleForm(props: {
   id: number;
   closeFormCB: () => void;
 }) {
-  const [forms, setForms] = useState<Form[]>([]);
+  // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 
   useEffect(() => {
     const data = localStorage.getItem("forms");
     if (data) {
       const dataJSON = JSON.parse(data);
-      setForms(dataJSON);
-      console.table(dataJSON);
 
       // find the corresponding form of the id
       const form = dataJSON.find((form: Form) => form.id === props.id);
@@ -51,7 +49,6 @@ export default function SingleForm(props: {
       });
 
       localStorage.setItem("forms", JSON.stringify(newData));
-      setForms(newData);
     }
   }, [formData]);
 
