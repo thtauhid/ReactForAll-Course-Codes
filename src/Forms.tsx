@@ -12,6 +12,17 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
     }
   }, []);
 
+  const addFormCB = () => {
+    const newForm: Form = {
+      id: Number(new Date()),
+      title: "Untitled Form",
+      fields: [],
+    };
+    const newForms = [...forms, newForm];
+    setForms(newForms);
+    localStorage.setItem("forms", JSON.stringify(newForms));
+  };
+
   const deleteFormCB = (id: number) => {
     const newForms = forms.filter((form) => form.id !== id);
     setForms(newForms);
@@ -26,8 +37,29 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
           formData={form}
           selectFormCB={props.selectFormCB}
           deleteFormCB={deleteFormCB}
+          addFormCB={addFormCB}
         />
       ))}
+
+      <button
+        className='flex justify-center items-center w-full p-3 bg-blue-500 rounded text-white'
+        onClick={addFormCB}
+      >
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          strokeWidth={1.5}
+          stroke='currentColor'
+          className='w-6 h-6'
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+          />
+        </svg>
+      </button>
     </>
   );
 }
@@ -36,6 +68,7 @@ function FormCard(props: {
   formData: Form;
   selectFormCB: (id: number) => void;
   deleteFormCB: (id: number) => void;
+  addFormCB: () => void;
 }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
