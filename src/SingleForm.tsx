@@ -106,6 +106,22 @@ export default function SingleForm(props: {
     });
   };
 
+  const manualSave = () => {
+    const data = localStorage.getItem("forms");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      const newData = dataJSON.map((form: Form) => {
+        if (form.id === formData.id) {
+          return formData;
+        }
+
+        return form;
+      });
+
+      localStorage.setItem("forms", JSON.stringify(newData));
+    }
+  };
+
   return (
     <>
       <input
@@ -173,23 +189,18 @@ export default function SingleForm(props: {
 
       <div className='mt-4 border border-stone-500'></div>
 
-      <div className='flex mt-4'>
-        <button
-          type='submit'
-          className='flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
-        >
+      <div className='flex mt-4' onClick={manualSave}>
+        <button className='flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'>
           Save
         </button>
 
         <button
-          type='button'
           className='flex-1 mx-2 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
           onClick={clearFields}
         >
           Clear Fields
         </button>
         <button
-          type='button'
           className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
           onClick={props.closeFormCB}
         >
