@@ -12,6 +12,12 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
     }
   }, []);
 
+  const deleteFormCB = (id: number) => {
+    const newForms = forms.filter((form) => form.id !== id);
+    setForms(newForms);
+    localStorage.setItem("forms", JSON.stringify(newForms));
+  };
+
   return (
     <>
       {forms.map((form) => (
@@ -19,6 +25,7 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
           key={form.id}
           formData={form}
           selectFormCB={props.selectFormCB}
+          deleteFormCB={deleteFormCB}
         />
       ))}
     </>
@@ -28,6 +35,7 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
 function FormCard(props: {
   formData: Form;
   selectFormCB: (id: number) => void;
+  deleteFormCB: (id: number) => void;
 }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
@@ -57,7 +65,10 @@ function FormCard(props: {
             />
           </svg>
         </button>
-        <button className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'>
+        <button
+          className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
+          onClick={() => props.deleteFormCB(props.formData.id)}
+        >
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
