@@ -78,14 +78,14 @@ export default function SingleForm(props: { formId: number }) {
     setNewFieldType("text");
   };
 
-  const handleFieldChangeCB = (id: number, value: string) => {
+  const handleFieldChangeCB = (id: number, label: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
         if (field.id === id) {
           return {
             ...field,
-            value,
+            label,
           };
         }
 

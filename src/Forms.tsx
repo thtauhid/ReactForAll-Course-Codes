@@ -2,33 +2,51 @@ import { useEffect, useState } from "react";
 import { Form } from "./types";
 import { Link } from "raviger";
 
-const sampleFormData = [
+const sampleFormData: Form[] = [
   {
     id: 1,
-    title: "New Form",
+    title: "Test Form",
     fields: [
       {
         id: 1,
-        label: "First name",
+        label: "Full name",
         type: "text",
         value: "",
       },
       {
         id: 2,
-        label: "Last name",
-        type: "text",
+        label: "Enrolment Number",
+        type: "number",
         value: "",
       },
       {
         id: 3,
+        label: "Phone Number",
+        type: "tel",
+        value: "",
+      },
+      {
+        id: 4,
         label: "Email",
         type: "email",
         value: "",
       },
       {
-        id: 4,
+        id: 5,
         label: "Password",
         type: "password",
+        value: "",
+      },
+      {
+        id: 6,
+        label: "Date of Birth",
+        type: "date",
+        value: "",
+      },
+      {
+        id: 7,
+        label: "Comments",
+        type: "textarea",
         value: "",
       },
     ],
