@@ -1,12 +1,12 @@
 import { useRoutes } from "raviger";
 
-import Home from "./Home";
 import SingleForm from "./SingleForm";
 import AppContainer from "./AppContainer";
 import Header from "./Header";
+import Forms from "./Forms";
 
 const routes = {
-  "/": () => <Home />,
+  "/": () => <Forms />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
     <SingleForm formId={Number(formId)} />
   ),
