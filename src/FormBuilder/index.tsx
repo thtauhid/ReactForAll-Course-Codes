@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Field from "./Field";
 
-import { Form } from "./types";
+import { Form } from "../types";
 import { Link } from "raviger";
 
 const formInitialData: Form = {
@@ -17,7 +17,7 @@ const formInitialData: Form = {
   ],
 };
 
-export default function SingleForm(props: { formId: number }) {
+export default function FormBuilder(props: { formId: number }) {
   // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 

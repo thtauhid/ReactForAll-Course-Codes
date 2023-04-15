@@ -1,15 +1,16 @@
 import { useRoutes } from "raviger";
 
-import SingleForm from "./SingleForm";
+import FormBuilder from "./FormBuilder";
+import PreviewForm from "./PreviewForm";
+
 import AppContainer from "./AppContainer";
 import Header from "./Header";
 import Forms from "./Forms";
-import PreviewForm from "./PreviewForm";
 
 const routes = {
   "/": () => <Forms />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
-    <SingleForm formId={Number(formId)} />
+    <FormBuilder formId={Number(formId)} />
   ),
   "/preview/:formId": ({ formId }: { formId: string }) => (
     <PreviewForm formId={Number(formId)} />
