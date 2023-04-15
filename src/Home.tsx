@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import { useRoutes, Link, useQueryParams } from "raviger";
+import { useEffect } from "react";
+// import { useRoutes, Link, useQueryParams } from "raviger";
 
-import AppContainer from "./AppContainer";
-import Header from "./Header";
-import SingleForm from "./SingleForm";
 import Forms from "./Forms";
 
 const sampleFormData = [
@@ -70,19 +67,6 @@ const sampleFormData = [
 ];
 
 export default function Home() {
-  const [currentForm, setCurrentForm] = useState(0);
-
-  const selectFormCB = (id: number) => {
-    console.log("Setting current form id to: ", id);
-    setCurrentForm(id);
-  };
-
-  const closeFormCB = () => {
-    console.log("Closing form");
-    console.log("Setting current form id to: ", 0);
-    setCurrentForm(0);
-  };
-
   // if there is no data set some default data
   useEffect(() => {
     const data = localStorage.getItem("forms");
@@ -91,16 +75,5 @@ export default function Home() {
     }
   }, []);
 
-  return (
-    <AppContainer>
-      <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl min-w-[34%]'>
-        <Header title='Level 4: Routing' />
-        {currentForm === 0 ? (
-          <Forms selectFormCB={selectFormCB} />
-        ) : (
-          <SingleForm id={currentForm} closeFormCB={closeFormCB} />
-        )}
-      </div>
-    </AppContainer>
-  );
+  return <Forms />;
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Field from "./Field";
 
 import { Form } from "./types";
+import { Link } from "raviger";
 
 const formInitialData: Form = {
   id: Number(new Date()),
@@ -16,10 +17,7 @@ const formInitialData: Form = {
   ],
 };
 
-export default function SingleForm(props: {
-  id: number;
-  closeFormCB: () => void;
-}) {
+export default function SingleForm(props: { formId: number }) {
   // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 
@@ -29,12 +27,12 @@ export default function SingleForm(props: {
       const dataJSON = JSON.parse(data);
 
       // find the corresponding form of the id
-      const form = dataJSON.find((form: Form) => form.id === props.id);
+      const form = dataJSON.find((form: Form) => form.id === props.formId);
       if (form) {
         setFormData(form);
       }
     }
-  }, [props.id]);
+  }, [props.formId]);
 
   useEffect(() => {
     const data = localStorage.getItem("forms");
@@ -200,12 +198,12 @@ export default function SingleForm(props: {
         >
           Clear Fields
         </button>
-        <button
-          className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          onClick={props.closeFormCB}
+        <Link
+          href='/'
+          className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 text-center'
         >
           Close
-        </button>
+        </Link>
       </div>
     </>
   );

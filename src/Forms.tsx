@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Form } from "./types";
+import { Link } from "raviger";
 
-export default function Forms(props: { selectFormCB: (id: number) => void }) {
+export default function Forms() {
   const [forms, setForms] = useState<Form[]>([]);
 
   useEffect(() => {
@@ -35,7 +36,6 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
         <FormCard
           key={form.id}
           formData={form}
-          selectFormCB={props.selectFormCB}
           deleteFormCB={deleteFormCB}
           addFormCB={addFormCB}
         />
@@ -66,17 +66,16 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
 
 function FormCard(props: {
   formData: Form;
-  selectFormCB: (id: number) => void;
   deleteFormCB: (id: number) => void;
   addFormCB: () => void;
 }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
       <h2 className='text-xl'>{props.formData.title}</h2>
-      <div>
-        <button
-          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white'
-          onClick={() => props.selectFormCB(props.formData.id)}
+      <div className='flex'>
+        <Link
+          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
+          href={`/forms/${props.formData.id}`}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -97,7 +96,7 @@ function FormCard(props: {
               d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
             />
           </svg>
-        </button>
+        </Link>
         <button
           className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
           onClick={() => props.deleteFormCB(props.formData.id)}
