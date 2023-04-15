@@ -111,7 +111,7 @@ export default function FormBuilder(props: { formId: number }) {
   };
 
   const copyFormLink = () => {
-    const url = `${window.location.origin}/form/${formData.id}`;
+    const url = `${window.location.origin}/preview/${formData.id}`;
     navigator.clipboard.writeText(url);
 
     alert("Preview Link copied to clipboard!");
