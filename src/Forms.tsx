@@ -1,12 +1,97 @@
 import { useEffect, useState } from "react";
 import { Form } from "./types";
+import { Link } from "raviger";
 
-export default function Forms(props: { selectFormCB: (id: number) => void }) {
+const sampleFormData: Form[] = [
+  {
+    id: 1,
+    title: "Test Form",
+    fields: [
+      {
+        id: 1,
+        label: "Full name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 2,
+        label: "Enrolment Number",
+        type: "number",
+        value: "",
+      },
+      {
+        id: 3,
+        label: "Phone Number",
+        type: "tel",
+        value: "",
+      },
+      {
+        id: 4,
+        label: "Email",
+        type: "email",
+        value: "",
+      },
+      {
+        id: 5,
+        label: "Password",
+        type: "password",
+        value: "",
+      },
+      {
+        id: 6,
+        label: "Date of Birth",
+        type: "date",
+        value: "",
+      },
+      {
+        id: 7,
+        label: "Comments",
+        type: "textarea",
+        value: "",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Personal Data Collection Form",
+    fields: [
+      {
+        id: 1,
+        label: "Full name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 2,
+        label: "Fathers name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 3,
+        label: "Mothers Name",
+        type: "text",
+        value: "",
+      },
+      {
+        id: 4,
+        label: "Email",
+        type: "email",
+        value: "",
+      },
+    ],
+  },
+];
+
+export default function Forms() {
   const [forms, setForms] = useState<Form[]>([]);
 
   useEffect(() => {
     const data = localStorage.getItem("forms");
-    if (data) {
+
+    if (!data) {
+      localStorage.setItem("forms", JSON.stringify(sampleFormData));
+    } else {
       const dataJSON = JSON.parse(data);
       setForms(dataJSON);
     }
@@ -35,7 +120,6 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
         <FormCard
           key={form.id}
           formData={form}
-          selectFormCB={props.selectFormCB}
           deleteFormCB={deleteFormCB}
           addFormCB={addFormCB}
         />
@@ -66,17 +150,16 @@ export default function Forms(props: { selectFormCB: (id: number) => void }) {
 
 function FormCard(props: {
   formData: Form;
-  selectFormCB: (id: number) => void;
   deleteFormCB: (id: number) => void;
   addFormCB: () => void;
 }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
       <h2 className='text-xl'>{props.formData.title}</h2>
-      <div>
-        <button
-          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white'
-          onClick={() => props.selectFormCB(props.formData.id)}
+      <div className='flex'>
+        <Link
+          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
+          href={`/forms/${props.formData.id}`}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -97,7 +180,7 @@ function FormCard(props: {
               d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
             />
           </svg>
-        </button>
+        </Link>
         <button
           className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
           onClick={() => props.deleteFormCB(props.formData.id)}

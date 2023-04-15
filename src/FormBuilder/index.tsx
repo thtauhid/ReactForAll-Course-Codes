@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Field from "./Field";
 
-import { Form } from "./types";
+import { Form } from "../types";
+import { Link } from "raviger";
 
 const formInitialData: Form = {
   id: Number(new Date()),
@@ -16,10 +17,7 @@ const formInitialData: Form = {
   ],
 };
 
-export default function SingleForm(props: {
-  id: number;
-  closeFormCB: () => void;
-}) {
+export default function FormBuilder(props: { formId: number }) {
   // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 
@@ -29,12 +27,12 @@ export default function SingleForm(props: {
       const dataJSON = JSON.parse(data);
 
       // find the corresponding form of the id
-      const form = dataJSON.find((form: Form) => form.id === props.id);
+      const form = dataJSON.find((form: Form) => form.id === props.formId);
       if (form) {
         setFormData(form);
       }
     }
-  }, [props.id]);
+  }, [props.formId]);
 
   useEffect(() => {
     const data = localStorage.getItem("forms");
@@ -80,14 +78,14 @@ export default function SingleForm(props: {
     setNewFieldType("text");
   };
 
-  const handleFieldChangeCB = (id: number, value: string) => {
+  const handleFieldChangeCB = (id: number, label: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
         if (field.id === id) {
           return {
             ...field,
-            value,
+            label,
           };
         }
 
@@ -96,14 +94,27 @@ export default function SingleForm(props: {
     });
   };
 
-  const clearFields = () => {
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => ({
-        ...field,
-        value: "",
-      })),
-    });
+  const manualSave = () => {
+    const data = localStorage.getItem("forms");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      const newData = dataJSON.map((form: Form) => {
+        if (form.id === formData.id) {
+          return formData;
+        }
+
+        return form;
+      });
+
+      localStorage.setItem("forms", JSON.stringify(newData));
+    }
+  };
+
+  const copyFormLink = () => {
+    const url = `${window.location.origin}/preview/${formData.id}`;
+    navigator.clipboard.writeText(url);
+
+    alert("Preview Link copied to clipboard!");
   };
 
   return (
@@ -173,28 +184,23 @@ export default function SingleForm(props: {
 
       <div className='mt-4 border border-stone-500'></div>
 
-      <div className='flex mt-4'>
-        <button
-          type='submit'
-          className='flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
-        >
+      <div className='flex mt-4' onClick={manualSave}>
+        <button className='mr-1 flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'>
           Save
         </button>
-
         <button
-          type='button'
-          className='flex-1 mx-2 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
-          onClick={clearFields}
+          onClick={copyFormLink}
+          className='mr-1 flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
         >
-          Clear Fields
+          Copy Preview Link
         </button>
-        <button
-          type='button'
-          className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          onClick={props.closeFormCB}
+
+        <Link
+          href='/'
+          className='ml-1 flex-1 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 text-center'
         >
           Close
-        </button>
+        </Link>
       </div>
     </>
   );

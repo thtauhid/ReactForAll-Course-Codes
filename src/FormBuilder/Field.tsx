@@ -4,30 +4,23 @@ interface Props {
   type: string;
   value: string;
   deleteFieldCB(id: number): void;
-  handleFieldChangeCB(id: number, value: string): void;
+  handleFieldChangeCB(id: number, label: string): void;
 }
 
 export default function Field(props: Props) {
-  if (props.type === "textarea") {
-    return <Textarea {...props} />;
-  } else {
-    return <RegularInput {...props} />;
-  }
+  return <RegularInput {...props} />;
 }
 
 function RegularInput(props: Props) {
   return (
     <>
-      <label htmlFor={props.label} className='block mt-4'>
-        {props.label}
-      </label>
       <div className='flex mt-2'>
         <input
-          value={props.value}
+          value={props.label}
           onChange={(e) => {
             props.handleFieldChangeCB(props.id, e.target.value);
           }}
-          type={props.type}
+          type='text'
           id={props.label}
           className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
         />
@@ -37,26 +30,26 @@ function RegularInput(props: Props) {
   );
 }
 
-function Textarea(props: Props) {
-  return (
-    <>
-      <label htmlFor={props.label} className='block mt-4'>
-        {props.label}
-      </label>
-      <div className='flex mt-2'>
-        <textarea
-          value={props.value}
-          onChange={(e) => {
-            props.handleFieldChangeCB(props.id, e.target.value);
-          }}
-          id={props.label}
-          className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
-        ></textarea>
-        <DeleteButton {...props} />
-      </div>
-    </>
-  );
-}
+// function Textarea(props: Props) {
+//   return (
+//     <>
+//       <label htmlFor={props.label} className='block mt-4'>
+//         {props.label}
+//       </label>
+//       <div className='flex mt-2'>
+//         <textarea
+//           value={props.value}
+//           onChange={(e) => {
+//             props.handleFieldChangeCB(props.id, e.target.value);
+//           }}
+//           id={props.label}
+//           className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+//         ></textarea>
+//         <DeleteButton {...props} />
+//       </div>
+//     </>
+//   );
+// }
 
 function DeleteButton(props: {
   id: number;
