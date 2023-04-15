@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form } from "./types";
+import { Form, ResponseField, FormResponse } from "./types";
 
 export default function PreviewForm(props: { formId: number }) {
   const formInitialData: Form = {
@@ -9,6 +9,7 @@ export default function PreviewForm(props: { formId: number }) {
   };
   const [formData, setFormData] = useState<Form>(formInitialData);
   const [currentField, setCurrentField] = useState<number>(0);
+  const [formValues, setFormValues] = useState<ResponseField[]>([]);
 
   useEffect(() => {
     const data = localStorage.getItem("forms");
@@ -19,6 +20,14 @@ export default function PreviewForm(props: { formId: number }) {
       if (form) {
         setFormData(form);
         console.log(form);
+
+        // set initial form values to empty strings
+        const initialFormValues = form.fields.map((field: ResponseField) => ({
+          label: field.label,
+          value: "",
+        }));
+
+        setFormValues(initialFormValues);
       }
     }
   }, [props.formId]);
@@ -31,6 +40,21 @@ export default function PreviewForm(props: { formId: number }) {
     setCurrentField(currentField + 1);
   };
 
+  const updateFormFieldData = (
+    e:
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newFormValues = [...formValues];
+    newFormValues[currentField] = {
+      label: formData.fields[currentField].label,
+      value: e.target.value,
+    };
+
+    setFormValues(newFormValues);
+
+    console.log(newFormValues);
+  };
   const submitForm = () => {};
 
   return (
@@ -51,6 +75,8 @@ export default function PreviewForm(props: { formId: number }) {
               name={field.label}
               id={field.label}
               className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
+              onChange={updateFormFieldData}
+              //   value={formValues[currentField]?.value}
             />
           ) : (
             <input
@@ -58,6 +84,8 @@ export default function PreviewForm(props: { formId: number }) {
               name={field.label}
               id={field.label}
               className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
+              onChange={updateFormFieldData}
+              //   value={formValues[currentField]?.value}
             />
           )}
         </div>
