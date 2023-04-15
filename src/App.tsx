@@ -6,6 +6,7 @@ import PreviewForm from "./PreviewForm";
 import AppContainer from "./AppContainer";
 import Header from "./Header";
 import Forms from "./Forms";
+import ErrorPage from "./ErrorPage";
 
 const routes = {
   "/": () => <Forms />,
@@ -15,6 +16,7 @@ const routes = {
   "/preview/:formId": ({ formId }: { formId: string }) => (
     <PreviewForm formId={Number(formId)} />
   ),
+  "/*": () => <ErrorPage />,
 };
 
 function App() {
