@@ -94,16 +94,6 @@ export default function FormBuilder(props: { formId: number }) {
     });
   };
 
-  const clearFields = () => {
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => ({
-        ...field,
-        value: "",
-      })),
-    });
-  };
-
   const manualSave = () => {
     const data = localStorage.getItem("forms");
     if (data) {
@@ -118,6 +108,13 @@ export default function FormBuilder(props: { formId: number }) {
 
       localStorage.setItem("forms", JSON.stringify(newData));
     }
+  };
+
+  const copyFormLink = () => {
+    const url = `${window.location.origin}/form/${formData.id}`;
+    navigator.clipboard.writeText(url);
+
+    alert("Preview Link copied to clipboard!");
   };
 
   return (
@@ -188,19 +185,19 @@ export default function FormBuilder(props: { formId: number }) {
       <div className='mt-4 border border-stone-500'></div>
 
       <div className='flex mt-4' onClick={manualSave}>
-        <button className='flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'>
+        <button className='mr-1 flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'>
           Save
         </button>
-
         <button
-          className='flex-1 mx-2 p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600'
-          onClick={clearFields}
+          onClick={copyFormLink}
+          className='mr-1 flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
         >
-          Clear Fields
+          Copy Preview Link
         </button>
+
         <Link
           href='/'
-          className='flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 text-center'
+          className='ml-1 flex-1 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 text-center'
         >
           Close
         </Link>
