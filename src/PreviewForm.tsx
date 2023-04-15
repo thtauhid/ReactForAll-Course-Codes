@@ -55,7 +55,22 @@ export default function PreviewForm(props: { formId: number }) {
 
     console.log(newFormValues);
   };
-  const submitForm = () => {};
+  const submitForm = () => {
+    const formResponse: FormResponse = {
+      id: Number(new Date()),
+      formId: formData.id,
+      fields: formValues,
+    };
+
+    const data = localStorage.getItem("responses");
+    if (data) {
+      const dataJSON = JSON.parse(data);
+      dataJSON.push(formResponse);
+      localStorage.setItem("responses", JSON.stringify(dataJSON));
+    } else {
+      localStorage.setItem("responses", JSON.stringify([formResponse]));
+    }
+  };
 
   return (
     <>
@@ -76,7 +91,7 @@ export default function PreviewForm(props: { formId: number }) {
               id={field.label}
               className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
               onChange={updateFormFieldData}
-              //   value={formValues[currentField]?.value}
+              value={formValues[currentField].value}
             />
           ) : (
             <input
@@ -85,7 +100,7 @@ export default function PreviewForm(props: { formId: number }) {
               id={field.label}
               className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
               onChange={updateFormFieldData}
-              //   value={formValues[currentField]?.value}
+              value={formValues[currentField].value}
             />
           )}
         </div>
