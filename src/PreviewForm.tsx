@@ -70,6 +70,15 @@ export default function PreviewForm(props: { formId: number }) {
     } else {
       localStorage.setItem("responses", JSON.stringify([formResponse]));
     }
+
+    alert("Form submitted successfully!");
+    // clear form values
+    const initialFormValues = formValues.map((field: ResponseField) => ({
+      label: field.label,
+      value: "",
+    }));
+    setFormValues(initialFormValues);
+    setCurrentField(0);
   };
 
   return (
