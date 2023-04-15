@@ -4,11 +4,15 @@ import SingleForm from "./SingleForm";
 import AppContainer from "./AppContainer";
 import Header from "./Header";
 import Forms from "./Forms";
+import PreviewForm from "./PreviewForm";
 
 const routes = {
   "/": () => <Forms />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
     <SingleForm formId={Number(formId)} />
+  ),
+  "/preview/:formId": ({ formId }: { formId: string }) => (
+    <PreviewForm formId={Number(formId)} />
   ),
 };
 
