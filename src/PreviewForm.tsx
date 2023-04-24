@@ -7,6 +7,7 @@ export default function PreviewForm(props: { formId: number }) {
     title: "Loading...",
     fields: [],
   };
+
   const [formData, setFormData] = useState<Form>(formInitialData);
   const [currentField, setCurrentField] = useState<number>(0);
   const [formValues, setFormValues] = useState<ResponseField[]>([]);
@@ -45,7 +46,8 @@ export default function PreviewForm(props: { formId: number }) {
       | React.ChangeEvent<HTMLTextAreaElement>
       | React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newFormValues = [...formValues];
+    let newFormValues = [...formValues];
+
     newFormValues[currentField] = {
       label: formData.fields[currentField].label,
       value: e.target.value,
@@ -53,7 +55,7 @@ export default function PreviewForm(props: { formId: number }) {
 
     setFormValues(newFormValues);
 
-    console.log(newFormValues);
+    console.table(newFormValues);
   };
   const submitForm = () => {
     const formResponse: FormResponse = {
