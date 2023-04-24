@@ -110,13 +110,6 @@ export default function FormBuilder(props: { formId: number }) {
     }
   };
 
-  const copyFormLink = () => {
-    const url = `${window.location.origin}/preview/${formData.id}`;
-    navigator.clipboard.writeText(url);
-
-    alert("Preview Link copied to clipboard!");
-  };
-
   return (
     <>
       <input
@@ -184,15 +177,12 @@ export default function FormBuilder(props: { formId: number }) {
 
       <div className='mt-4 border border-stone-500'></div>
 
-      <div className='flex mt-4' onClick={manualSave}>
-        <button className='mr-1 flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'>
-          Save
-        </button>
+      <div className='flex mt-4'>
         <button
-          onClick={copyFormLink}
-          className='mr-1 flex-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+          className='mr-1 flex-1 p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600'
+          onClick={manualSave}
         >
-          Copy Preview Link
+          Save
         </button>
 
         <Link
@@ -200,6 +190,34 @@ export default function FormBuilder(props: { formId: number }) {
           className='ml-1 flex-1 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 text-center'
         >
           Close
+        </Link>
+      </div>
+      <div className='flex mt-4'>
+        <input
+          type='text'
+          className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+          value={`http://localhost:3000/preview/${formData.id}`}
+        />
+        <Link
+          type='button'
+          className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+          href={`/preview/${formData.id}`}
+          target='_blank'
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='w-6 h-6'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25'
+            />
+          </svg>
         </Link>
       </div>
     </>
