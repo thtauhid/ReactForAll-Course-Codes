@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Field from "./Field";
 
-import { Form } from "../types";
+import { Form, TextField, TextFieldTypes } from "../types";
 import { Link } from "raviger";
 
 const formInitialData: Form = {
@@ -9,9 +9,10 @@ const formInitialData: Form = {
   title: "Untitled Form",
   fields: [
     {
+      kind: "text",
       id: 1,
       label: "First Name",
-      type: "text",
+      fieldType: "text",
       value: "",
     },
   ],
@@ -58,21 +59,24 @@ export default function FormBuilder(props: { formId: number }) {
   };
 
   const [newFieldLabel, setNewFieldLabel] = useState("");
-  const [newFieldType, setNewFieldType] = useState("text");
+  const [newFieldType, setNewFieldType] = useState<TextFieldTypes>("text");
 
   const addFormField = () => {
-    setFormData({
+    // TextField needs to be changed to FormField when implementing Dropdown
+    const newField: TextField = {
+      kind: "text",
+      id: formData.fields.length + 1,
+      label: newFieldLabel,
+      fieldType: newFieldType,
+      value: "",
+    };
+
+    const newFieldData: Form = {
       ...formData,
-      fields: [
-        ...formData.fields,
-        {
-          id: formData.fields.length + 1,
-          label: newFieldLabel,
-          type: newFieldType,
-          value: "",
-        },
-      ],
-    });
+      fields: [...formData.fields, newField],
+    };
+
+    setFormData(newFieldData);
 
     setNewFieldLabel("");
     setNewFieldType("text");
@@ -110,6 +114,12 @@ export default function FormBuilder(props: { formId: number }) {
     }
   };
 
+  const handleFieldTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setNewFieldType(e.currentTarget.value as TextFieldTypes);
+    console.log(e.currentTarget.value);
+    console.log(e.currentTarget.value as TextFieldTypes);
+  };
+
   return (
     <>
       <input
@@ -122,20 +132,24 @@ export default function FormBuilder(props: { formId: number }) {
 
       <div className='mt-4 border border-stone-500'></div>
 
-      {formData.fields.map((field) => (
-        <Field
-          key={field.id}
-          {...field}
-          deleteFieldCB={deleteFieldCB}
-          handleFieldChangeCB={handleFieldChangeCB}
-        />
-      ))}
+      {formData.fields.map((field) => {
+        return field.kind === "text" ? (
+          <Field
+            key={field.id}
+            {...field}
+            deleteFieldCB={deleteFieldCB}
+            handleFieldChangeCB={handleFieldChangeCB}
+          />
+        ) : (
+          <div></div>
+        );
+      })}
       <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
         <select
           id='type'
           className='flex-1 mr-1 p-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
           value={newFieldType}
-          onChange={(e) => setNewFieldType(e.target.value)}
+          onChange={handleFieldTypeChange}
         >
           <option value='text'>Text</option>
           <option value='email'>Email</option>

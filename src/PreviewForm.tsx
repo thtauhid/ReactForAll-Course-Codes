@@ -96,23 +96,29 @@ export default function PreviewForm(props: { formId: number }) {
           } flex flex-col`}
         >
           <label htmlFor={field.label}>{field.label}</label>
-          {field.type === "textarea" ? (
-            <textarea
-              name={field.label}
-              id={field.label}
-              className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
-              onChange={updateFormFieldData}
-              value={formValues[currentField].value}
-            />
+          {field.kind === "text" ? (
+            <>
+              {field.fieldType === "textarea" ? (
+                <textarea
+                  name={field.label}
+                  id={field.label}
+                  className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
+                  onChange={updateFormFieldData}
+                  value={formValues[currentField].value}
+                />
+              ) : (
+                <input
+                  type={field.fieldType}
+                  name={field.label}
+                  id={field.label}
+                  className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
+                  onChange={updateFormFieldData}
+                  value={formValues[currentField].value}
+                />
+              )}
+            </>
           ) : (
-            <input
-              type={field.type}
-              name={field.label}
-              id={field.label}
-              className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
-              onChange={updateFormFieldData}
-              value={formValues[currentField].value}
-            />
+            <></>
           )}
         </div>
       ))}

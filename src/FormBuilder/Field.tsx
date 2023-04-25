@@ -1,7 +1,7 @@
 interface Props {
   id: number;
   label: string;
-  type: string;
+  fieldType: string;
   value: string;
   deleteFieldCB(id: number): void;
   handleFieldChangeCB(id: number, label: string): void;
