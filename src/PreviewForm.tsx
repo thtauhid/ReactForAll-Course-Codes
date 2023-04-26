@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Form, ResponseField, FormResponse } from "./types";
+import Select from "react-select";
 
 export default function PreviewForm(props: { formId: number }) {
   const formInitialData: Form = {
@@ -118,7 +119,16 @@ export default function PreviewForm(props: { formId: number }) {
               )}
             </>
           ) : (
-            <></>
+            <>
+              <Select
+                options={field.options.map((option) => ({
+                  label: option,
+                  value: option,
+                }))}
+                isMulti
+                className='mt-2'
+              />
+            </>
           )}
         </div>
       ))}
