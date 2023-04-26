@@ -22,7 +22,7 @@ export type DropdownField = {
   id: number;
   label: string;
   options: string[];
-  value: string;
+  values: string[];
 };
 
 export type FormField = TextField | DropdownField;

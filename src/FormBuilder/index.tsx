@@ -70,7 +70,7 @@ export default function FormBuilder(props: { formId: number }) {
         id: formData.fields.length + 1,
         label: newFieldLabel,
         options: ["Option 1", "Option 2", "Option 3"],
-        value: "",
+        values: [],
       };
     } else {
       newField = {
@@ -152,6 +152,25 @@ export default function FormBuilder(props: { formId: number }) {
     setNewFieldType(e.currentTarget.value as FieldTypes);
   };
 
+  const addOptionCB = (id: number) => {
+    let formField: DropdownField = formData.fields.find(
+      (field) => field.id === id
+    ) as DropdownField;
+
+    formField.options.push(`Option ${formField.options.length + 1}`);
+
+    setFormData({
+      ...formData,
+      fields: formData.fields.map((field) => {
+        if (field.id === id) {
+          return formField;
+        }
+
+        return field;
+      }),
+    });
+  };
+
   return (
     <>
       <input
@@ -173,6 +192,7 @@ export default function FormBuilder(props: { formId: number }) {
               deleteFieldCB,
               handleTitleChangeCB,
               handleOptionValueChangeCB,
+              addOptionCB,
             }}
           />
         );

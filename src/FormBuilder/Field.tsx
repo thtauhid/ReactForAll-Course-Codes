@@ -8,6 +8,7 @@ type Props = {
     optionIndex: number,
     value: string
   ): void;
+  addOptionCB(id: number): void;
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
@@ -71,6 +72,8 @@ function DropdownInput(props: { data: DropdownField; cb: Props }) {
           />
         );
       })}
+
+      <AddOptionButton id={props.data.id} addOptionCB={props.cb.addOptionCB} />
     </div>
   );
 }
@@ -123,3 +126,20 @@ function DeleteButton(props: {
     </button>
   );
 }
+
+const AddOptionButton = (props: {
+  id: number;
+  addOptionCB: (id: number) => void;
+}) => {
+  return (
+    <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
+      <button
+        type='button'
+        className='flex-1 ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+        onClick={() => props.addOptionCB(props.id)}
+      >
+        New Option
+      </button>
+    </div>
+  );
+};
