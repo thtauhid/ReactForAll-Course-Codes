@@ -171,6 +171,25 @@ export default function FormBuilder(props: { formId: number }) {
     });
   };
 
+  const deleteOptionCB = (id: number, optionIndex: number) => {
+    let formField: DropdownField = formData.fields.find(
+      (field) => field.id === id
+    ) as DropdownField;
+
+    formField.options.splice(optionIndex, 1);
+
+    setFormData({
+      ...formData,
+      fields: formData.fields.map((field) => {
+        if (field.id === id) {
+          return formField;
+        }
+
+        return field;
+      }),
+    });
+  };
+
   return (
     <>
       <input
@@ -193,6 +212,7 @@ export default function FormBuilder(props: { formId: number }) {
               handleTitleChangeCB,
               handleOptionValueChangeCB,
               addOptionCB,
+              deleteOptionCB,
             }}
           />
         );
