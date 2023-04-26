@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Field from "./Field";
 
-import { Form, TextField, TextFieldTypes } from "../types";
+import { Form, FieldTypes, FormField, DropdownField } from "../types";
 import { Link } from "raviger";
 
 const formInitialData: Form = {
@@ -59,17 +59,28 @@ export default function FormBuilder(props: { formId: number }) {
   };
 
   const [newFieldLabel, setNewFieldLabel] = useState("");
-  const [newFieldType, setNewFieldType] = useState<TextFieldTypes>("text");
+  const [newFieldType, setNewFieldType] = useState<FieldTypes>("text");
 
   const addFormField = () => {
-    // TextField needs to be changed to FormField when implementing Dropdown
-    const newField: TextField = {
-      kind: "text",
-      id: formData.fields.length + 1,
-      label: newFieldLabel,
-      fieldType: newFieldType,
-      value: "",
-    };
+    let newField: FormField;
+
+    if (newFieldType === "dropdown") {
+      newField = {
+        kind: "dropdown",
+        id: formData.fields.length + 1,
+        label: newFieldLabel,
+        options: ["Option 1", "Option 2", "Option 3"],
+        value: "",
+      };
+    } else {
+      newField = {
+        kind: "text",
+        id: formData.fields.length + 1,
+        label: newFieldLabel,
+        fieldType: newFieldType,
+        value: "",
+      };
+    }
 
     const newFieldData: Form = {
       ...formData,
@@ -82,7 +93,7 @@ export default function FormBuilder(props: { formId: number }) {
     setNewFieldType("text");
   };
 
-  const handleFieldChangeCB = (id: number, label: string) => {
+  const handleTitleChangeCB = (id: number, label: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
@@ -91,6 +102,29 @@ export default function FormBuilder(props: { formId: number }) {
             ...field,
             label,
           };
+        }
+
+        return field;
+      }),
+    });
+  };
+
+  const handleOptionValueChangeCB = (
+    id: number,
+    optionIndex: number,
+    value: string
+  ) => {
+    let formField: DropdownField = formData.fields.find(
+      (field) => field.id === id
+    ) as DropdownField;
+
+    formField.options[optionIndex] = value;
+
+    setFormData({
+      ...formData,
+      fields: formData.fields.map((field) => {
+        if (field.id === id) {
+          return formField;
         }
 
         return field;
@@ -115,9 +149,7 @@ export default function FormBuilder(props: { formId: number }) {
   };
 
   const handleFieldTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
-    setNewFieldType(e.currentTarget.value as TextFieldTypes);
-    console.log(e.currentTarget.value);
-    console.log(e.currentTarget.value as TextFieldTypes);
+    setNewFieldType(e.currentTarget.value as FieldTypes);
   };
 
   return (
@@ -133,15 +165,16 @@ export default function FormBuilder(props: { formId: number }) {
       <div className='mt-4 border border-stone-500'></div>
 
       {formData.fields.map((field) => {
-        return field.kind === "text" ? (
+        return (
           <Field
             key={field.id}
-            {...field}
-            deleteFieldCB={deleteFieldCB}
-            handleFieldChangeCB={handleFieldChangeCB}
+            data={field}
+            cb={{
+              deleteFieldCB,
+              handleTitleChangeCB,
+              handleOptionValueChangeCB,
+            }}
           />
-        ) : (
-          <div></div>
         );
       })}
       <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
@@ -158,6 +191,7 @@ export default function FormBuilder(props: { formId: number }) {
           <option value='number'>Number</option>
           <option value='password'>Password</option>
           <option value='textarea'>Textarea</option>
+          <option value='dropdown'>Dropdown</option>
         </select>
 
         <input

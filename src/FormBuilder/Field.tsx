@@ -1,32 +1,77 @@
-interface Props {
-  id: number;
-  label: string;
-  fieldType: string;
-  value: string;
+import { FormField, TextField, DropdownField } from "../types";
+
+type Props = {
   deleteFieldCB(id: number): void;
-  handleFieldChangeCB(id: number, label: string): void;
-}
+  handleTitleChangeCB(id: number, label: string): void;
+  handleOptionValueChangeCB(
+    id: number,
+    optionIndex: number,
+    value: string
+  ): void;
+};
 
-export default function Field(props: Props) {
-  return <RegularInput {...props} />;
-}
-
-function RegularInput(props: Props) {
+export default function Field(props: { data: FormField; cb: Props }) {
   return (
-    <>
-      <div className='flex mt-2'>
-        <input
-          value={props.label}
-          onChange={(e) => {
-            props.handleFieldChangeCB(props.id, e.target.value);
-          }}
-          type='text'
-          id={props.label}
-          className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
-        />
-        <DeleteButton {...props} />
-      </div>
-    </>
+    <div className='flex my-8'>
+      {props.data.kind === "text" ? (
+        <RegularInput data={props.data} cb={props.cb} />
+      ) : (
+        <DropdownInput data={props.data} cb={props.cb} />
+      )}
+      <DeleteButton id={props.data.id} deleteFieldCB={props.cb.deleteFieldCB} />
+    </div>
+  );
+}
+
+function RegularInput(props: { data: TextField; cb: Props }) {
+  return (
+    <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
+      <p className='m-2 text-stone-600'>{props.data.fieldType}</p>
+      <input
+        value={props.data.label}
+        onChange={(e) => {
+          props.cb.handleTitleChangeCB(props.data.id, e.target.value);
+        }}
+        type='text'
+        id={props.data.label}
+        className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+      />
+    </div>
+  );
+}
+
+function DropdownInput(props: { data: DropdownField; cb: Props }) {
+  return (
+    <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
+      <p className='m-2 text-stone-600'>{props.data.kind}</p>
+      <input
+        type='text'
+        value={props.data.label}
+        onChange={(e) => {
+          props.cb.handleTitleChangeCB(props.data.id, e.target.value);
+        }}
+        className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+      />
+      {props.data.options.length > 0 && (
+        <b className='m-2 text-stone-600'>Options</b>
+      )}
+      {props.data.options.map((option) => {
+        return (
+          <input
+            type='text'
+            value={option}
+            onChange={(e) => {
+              props.cb.handleOptionValueChangeCB(
+                props.data.id,
+                props.data.options.indexOf(option),
+                e.target.value
+              );
+            }}
+            className='p-2 border border-gray-300 mt-1 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+          />
+        );
+      })}
+    </div>
   );
 }
 

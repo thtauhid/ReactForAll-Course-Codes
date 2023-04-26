@@ -7,6 +7,8 @@ export type TextFieldTypes =
   | "password"
   | "textarea";
 
+export type FieldTypes = TextFieldTypes | "dropdown";
+
 export type TextField = {
   kind: "text";
   id: number;
@@ -15,7 +17,7 @@ export type TextField = {
   value: string;
 };
 
-type DropdownField = {
+export type DropdownField = {
   kind: "dropdown";
   id: number;
   label: string;
