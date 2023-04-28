@@ -91,6 +91,10 @@ export default function PreviewForm(props: { formId: number }) {
       <h1 className='text-center font-bold text-3xl'>{formData.title}</h1>
       <div className='my-4 border border-stone-500'></div>
 
+      {formData.fields.length === 0 && (
+        <p className='text-center'>No fields added to this form yet.</p>
+      )}
+
       {formData.fields.map((field, index) => (
         <div
           key={field.id}
