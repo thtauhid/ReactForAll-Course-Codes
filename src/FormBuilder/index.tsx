@@ -70,7 +70,7 @@ export default function FormBuilder(props: { formId: number }) {
         id: formData.fields.length + 1,
         label: newFieldLabel,
         options: ["Option 1", "Option 2", "Option 3"],
-        values: [],
+        value: [],
       };
     } else {
       newField = {
