@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Form, ResponseField, FormResponse } from "./types";
+import { navigate } from "raviger";
 
 export default function PreviewForm(props: { formId: number }) {
   const formInitialData: Form = {
@@ -29,6 +30,8 @@ export default function PreviewForm(props: { formId: number }) {
         }));
 
         setFormValues(initialFormValues);
+      } else {
+        navigate("/404");
       }
     }
   }, [props.formId]);

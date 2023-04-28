@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Field from "./Field";
 
 import { Form } from "../types";
-import { Link } from "raviger";
+import { Link, navigate } from "raviger";
 
 const formInitialData: Form = {
   id: Number(new Date()),
@@ -30,6 +30,8 @@ export default function FormBuilder(props: { formId: number }) {
       const form = dataJSON.find((form: Form) => form.id === props.formId);
       if (form) {
         setFormData(form);
+      } else {
+        navigate("/404");
       }
     }
   }, [props.formId]);
