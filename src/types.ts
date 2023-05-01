@@ -41,18 +41,19 @@ export interface Form {
   fields: FormField[];
 }
 
-// Trimmed down to remove irrelevant fields of FormField
-export type TextResponseField = {
+// use for fields like text, email, date, tel, number, password, etc
+export type SingleValueResponseField = {
   label: string;
   value: string;
 };
 
-export type DropdownResponseField = {
+// use for fields like dropdown and checkbox
+export type MultiValueResponseField = {
   label: string;
   value: string[];
 };
 
-export type ResponseField = TextResponseField | DropdownResponseField;
+export type ResponseField = SingleValueResponseField | MultiValueResponseField;
 
 export type FormResponse = {
   id: number;
