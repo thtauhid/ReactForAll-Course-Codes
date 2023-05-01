@@ -126,8 +126,10 @@ export default function PreviewForm(props: { formId: number }) {
             updateFieldDataCB={updateFieldDataCB}
             updateMultiselectDataCB={updateMultiselectDataCB}
           />
+        ) : responseData.length === 0 ? (
+          <div className='text-center'>No fields found</div>
         ) : (
-          "Loading..."
+          <div className='text-center'>Loading...</div>
         )}
       </div>
       <div className='my-4 border border-stone-500'></div>
