@@ -40,7 +40,9 @@ export default function PreviewForm(props: { formId: number }) {
 
   // update field/option data
   const updateFieldDataCB = (
-    e: React.ChangeEventHandler<HTMLInputElement> | any
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     // get the current response data
     let newResponseData = [...responseData];
@@ -48,13 +50,29 @@ export default function PreviewForm(props: { formId: number }) {
     // update the response data
     newResponseData[currentField] = {
       label: formData.fields[currentField].label,
-      value: e.target.value,
+      value: (event.target as HTMLInputElement).value,
     };
 
     // set the response data
     setResponseData(newResponseData);
 
     console.table(newResponseData);
+  };
+
+  const updateMultiselectDataCB = (selectedList: any) => {
+    // get the current response data
+    let newResponseData = [...responseData];
+
+    // update the response data
+    newResponseData[currentField] = {
+      label: formData.fields[currentField].label,
+      value: selectedList,
+    };
+
+    // set the response data
+    setResponseData(newResponseData);
+
+    console.log(newResponseData);
   };
 
   // next field
@@ -91,6 +109,9 @@ export default function PreviewForm(props: { formId: number }) {
 
     // show alert to user
     alert("Form submitted!");
+
+    // redirect to home page on click of ok
+    navigate("/");
   };
 
   return (
@@ -103,6 +124,7 @@ export default function PreviewForm(props: { formId: number }) {
             fieldData={formData.fields[currentField]}
             responseData={responseData[currentField]}
             updateFieldDataCB={updateFieldDataCB}
+            updateMultiselectDataCB={updateMultiselectDataCB}
           />
         ) : (
           "Loading..."

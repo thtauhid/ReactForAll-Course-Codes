@@ -1,19 +1,21 @@
-import Select, { MultiValue, Options } from "react-select";
+import Multiselect from "multiselect-react-dropdown";
+
 import {
   FormField,
   ResponseField,
   TextField,
-  TextResponseField,
   DropdownField as IDropdownField,
 } from "../types";
-import { useState } from "react";
 
 type Props = {
   fieldData: FormField;
   responseData: ResponseField;
   updateFieldDataCB: (
-    e: React.ChangeEventHandler<HTMLInputElement> | any
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
+  updateMultiselectDataCB: (selectedList: any) => void;
 };
 
 export default function Field(props: Props) {
@@ -67,28 +69,33 @@ const TextAreaField = (props: Props) => {
 };
 
 const DropdownField = (props: Props) => {
-  // type cast to DropdownField
   const fieldData = props.fieldData as IDropdownField;
 
-  const [selectedOptions, setSelectedOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
+  type Option = {
+    value: string;
+  };
 
-  const handleOptionUpdate = (options: Options) => {
-    setSelectedOptions(options as { label: string; value: string }[]);
+  const options = fieldData.options.map((value: string) => ({
+    value,
+  }));
+
+  const handleChange = (selectedList: Option[]) => {
+    const selectedOptions = selectedList.map((option: Option) => option.value);
+    console.log(selectedOptions);
+
+    props.updateMultiselectDataCB(selectedOptions);
   };
 
   return (
     <>
       <label htmlFor={fieldData.label}>{fieldData.label}</label>
-      <Select
-        options={fieldData.options.map((option: string) => ({
-          label: option,
-          value: option,
-        }))}
-        isMulti
-        className='mt-2'
-        onChange={handleOptionUpdate}
+      <Multiselect
+        displayValue='value'
+        options={options}
+        showCheckbox
+        onSelect={handleChange}
+        onRemove={handleChange}
+        showArrow
       />
     </>
   );
