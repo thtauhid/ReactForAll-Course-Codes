@@ -1,4 +1,4 @@
-import { FormField, TextField, DropdownField } from "../types";
+import { FormField, TextField, RadioField, DropdownField } from "../types";
 
 type Props = {
   deleteFieldCB(id: number): void;
@@ -13,19 +13,45 @@ type Props = {
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
-  return (
-    <div className='flex my-8'>
-      {props.data.kind === "text" ? (
-        <RegularInput data={props.data} cb={props.cb} />
-      ) : (
-        <DropdownInput data={props.data} cb={props.cb} />
-      )}
-      <DeleteButton id={props.data.id} deleteFieldCB={props.cb.deleteFieldCB} />
-    </div>
-  );
+  switch (props.data.kind) {
+    case "text":
+      return (
+        <div className='flex my-8'>
+          <RegularInput data={props.data} cb={props.cb} />
+          <DeleteButton
+            id={props.data.id}
+            deleteFieldCB={props.cb.deleteFieldCB}
+          />
+        </div>
+      );
+    case "dropdown":
+      return (
+        <div className='flex my-8'>
+          <DropdownInput data={props.data} cb={props.cb} />
+          <DeleteButton
+            id={props.data.id}
+            deleteFieldCB={props.cb.deleteFieldCB}
+          />
+        </div>
+      );
+
+    case "radio":
+      return (
+        <div className='flex my-8'>
+          <RadioInput data={props.data} cb={props.cb} />
+          <DeleteButton
+            id={props.data.id}
+            deleteFieldCB={props.cb.deleteFieldCB}
+          />
+        </div>
+      );
+    default:
+      return null;
+  }
 }
 
-function RegularInput(props: { data: TextField; cb: Props }) {
+// convert into single input
+const RegularInput = (props: { data: TextField; cb: Props }) => {
   return (
     <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
       <p className='m-2 text-stone-600'>{props.data.fieldType}</p>
@@ -40,9 +66,10 @@ function RegularInput(props: { data: TextField; cb: Props }) {
       />
     </div>
   );
-}
+};
 
-function DropdownInput(props: { data: DropdownField; cb: Props }) {
+// convert dropdowninput to multioption
+const DropdownInput = (props: { data: DropdownField; cb: Props }) => {
   return (
     <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
       <p className='m-2 text-stone-600'>{props.data.kind}</p>
@@ -84,7 +111,52 @@ function DropdownInput(props: { data: DropdownField; cb: Props }) {
       <AddOptionButton id={props.data.id} addOptionCB={props.cb.addOptionCB} />
     </div>
   );
-}
+};
+
+// will be absorbed by multiinput
+const RadioInput = (props: { data: RadioField; cb: Props }) => {
+  return (
+    <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
+      <p className='m-2 text-stone-600'>{props.data.kind}</p>
+      <input
+        type='text'
+        value={props.data.label}
+        onChange={(e) => {
+          props.cb.handleTitleChangeCB(props.data.id, e.target.value);
+        }}
+        className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+      />
+      {props.data.options.length > 0 && (
+        <b className='m-2 text-stone-600'>Options</b>
+      )}
+      {props.data.options.map((option) => {
+        return (
+          <div className='flex items-center'>
+            <input
+              type='text'
+              value={option}
+              onChange={(e) => {
+                props.cb.handleOptionValueChangeCB(
+                  props.data.id,
+                  props.data.options.indexOf(option),
+                  e.target.value
+                );
+              }}
+              className='p-2 border border-gray-300 mt-1 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+            />
+            <DeleteOptionButton
+              id={props.data.id}
+              optionIndex={props.data.options.indexOf(option)}
+              deleteOptionCB={props.cb.deleteOptionCB}
+            />
+          </div>
+        );
+      })}
+
+      <AddOptionButton id={props.data.id} addOptionCB={props.cb.addOptionCB} />
+    </div>
+  );
+};
 
 // function Textarea(props: Props) {
 //   return (

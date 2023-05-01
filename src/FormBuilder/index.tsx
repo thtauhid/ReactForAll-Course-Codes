@@ -64,22 +64,33 @@ export default function FormBuilder(props: { formId: number }) {
   const addFormField = () => {
     let newField: FormField;
 
-    if (newFieldType === "dropdown") {
-      newField = {
-        kind: "dropdown",
-        id: formData.fields.length + 1,
-        label: newFieldLabel,
-        options: ["Option 1", "Option 2", "Option 3"],
-        value: [],
-      };
-    } else {
-      newField = {
-        kind: "text",
-        id: formData.fields.length + 1,
-        label: newFieldLabel,
-        fieldType: newFieldType,
-        value: "",
-      };
+    switch (newFieldType) {
+      case "dropdown":
+        newField = {
+          kind: "dropdown",
+          id: formData.fields.length + 1,
+          label: newFieldLabel,
+          options: ["Option 1", "Option 2", "Option 3"],
+          value: [],
+        };
+        break;
+      case "radio":
+        newField = {
+          kind: "radio",
+          id: formData.fields.length + 1,
+          label: newFieldLabel,
+          options: ["Option 1", "Option 2", "Option 3"],
+          value: "",
+        };
+        break;
+      default:
+        newField = {
+          kind: "text",
+          id: formData.fields.length + 1,
+          label: newFieldLabel,
+          fieldType: newFieldType,
+          value: "",
+        };
     }
 
     const newFieldData: Form = {
@@ -232,6 +243,7 @@ export default function FormBuilder(props: { formId: number }) {
           <option value='password'>Password</option>
           <option value='textarea'>Textarea</option>
           <option value='dropdown'>Dropdown</option>
+          <option value='radio'>Radio</option>
         </select>
 
         <input

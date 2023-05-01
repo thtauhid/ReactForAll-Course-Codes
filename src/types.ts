@@ -7,7 +7,7 @@ export type TextFieldTypes =
   | "password"
   | "textarea";
 
-export type FieldTypes = TextFieldTypes | "dropdown";
+export type FieldTypes = TextFieldTypes | "dropdown" | "radio";
 
 export type TextField = {
   kind: "text";
@@ -25,7 +25,15 @@ export type DropdownField = {
   value: string[];
 };
 
-export type FormField = TextField | DropdownField;
+export type RadioField = {
+  kind: "radio";
+  id: number;
+  label: string;
+  options: string[];
+  value: string;
+};
+
+export type FormField = TextField | DropdownField | RadioField;
 
 export interface Form {
   id: number;

@@ -5,6 +5,7 @@ import {
   ResponseField,
   TextField,
   DropdownField as IDropdownField,
+  RadioField as IRadioField,
 } from "../types";
 
 type Props = {
@@ -24,6 +25,8 @@ export default function Field(props: Props) {
       return <TextFields {...props} />;
     case "dropdown":
       return <DropdownField {...props} />;
+    case "radio":
+      return <RadioField {...props} />;
     default:
       return <div></div>;
   }
@@ -97,6 +100,29 @@ const DropdownField = (props: Props) => {
         onRemove={handleChange}
         showArrow
       />
+    </>
+  );
+};
+
+const RadioField = (props: Props) => {
+  // type cast to RadioField
+  const fieldData = props.fieldData as IRadioField;
+  return (
+    <>
+      <label htmlFor={fieldData.label}>{fieldData.label}</label>
+      {fieldData.options.map((option: string) => (
+        <div key={option}>
+          <input
+            type='radio'
+            name={fieldData.label}
+            id={option}
+            value={option}
+            className='mr-2'
+            onChange={props.updateFieldDataCB}
+          />
+          <label htmlFor={option}>{option}</label>
+        </div>
+      ))}
     </>
   );
 };
