@@ -297,6 +297,7 @@ export default function FormBuilder(props: { formId: number }) {
           type='text'
           className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
           value={`http://localhost:3000/preview/${formData.id}`}
+          readOnly
         />
         <Link
           type='button'
