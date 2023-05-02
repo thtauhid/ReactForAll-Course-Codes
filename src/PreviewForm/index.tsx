@@ -114,6 +114,32 @@ export default function PreviewForm(props: { formId: number }) {
     navigate("/");
   };
 
+  // check if all the multiselect fields have at least two option in it
+  const checkMultiValueFieldHasAtleastTwoOptions = () => {
+    // if there are multiselect fields, check if they have at least two options
+    let check = true;
+    formData.fields.forEach((field) => {
+      if (
+        (field.kind === "dropdown" || field.kind === "radio") &&
+        field.options.length < 2
+      )
+        check = false;
+    });
+
+    return check;
+  };
+
+  if (!checkMultiValueFieldHasAtleastTwoOptions())
+    return (
+      <div className='text-center'>
+        <h1 className='text-3xl font-bold'>Error</h1>
+        <div className='my-4 border border-stone-500'></div>
+        <div className='text-xl'>
+          The form is broken. Please contact the form creator.
+        </div>
+      </div>
+    );
+
   return (
     <>
       <h1 className='text-center font-bold text-3xl'>{formData.title}</h1>

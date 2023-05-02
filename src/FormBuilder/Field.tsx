@@ -84,9 +84,11 @@ const MultiOptionInput = (props: {
         }}
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
       />
+
       {props.data.options.length > 0 && (
         <b className='m-2 text-stone-600'>Options</b>
       )}
+
       {props.data.options.map((option) => {
         return (
           <div
@@ -113,6 +115,12 @@ const MultiOptionInput = (props: {
           </div>
         );
       })}
+
+      {props.data.options.length < 2 && (
+        <div className='bg-red-500 text-white p-2 rounded my-2'>
+          Minimum of 2 options required
+        </div>
+      )}
 
       <AddOptionButton id={props.data.id} addOptionCB={props.cb.addOptionCB} />
     </div>
