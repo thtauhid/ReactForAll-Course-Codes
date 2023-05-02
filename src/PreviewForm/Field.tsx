@@ -16,7 +16,7 @@ type Props = {
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
-  updateMultiselectDataCB: (selectedList: any) => void;
+  updateMultiselectDataCB: (selectedList: string[]) => void;
 };
 
 export default function Field(props: Props) {

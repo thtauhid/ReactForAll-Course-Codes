@@ -59,7 +59,7 @@ export default function PreviewForm(props: { formId: number }) {
     console.table(newResponseData);
   };
 
-  const updateMultiselectDataCB = (selectedList: any) => {
+  const updateMultiselectDataCB = (selectedList: string[]) => {
     // get the current response data
     let newResponseData = [...responseData];
 
