@@ -89,7 +89,10 @@ const MultiOptionInput = (props: {
       )}
       {props.data.options.map((option) => {
         return (
-          <div className='flex items-center'>
+          <div
+            className='flex items-center'
+            key={props.data.options.indexOf(option)}
+          >
             <input
               type='text'
               value={option}
