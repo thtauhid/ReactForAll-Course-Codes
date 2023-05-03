@@ -20,38 +20,52 @@ const formInitialData: Form = {
   ],
 };
 
+const loadFormData = (formId: string) => {
+  const data = localStorage.getItem("forms");
+  if (data) {
+    const dataJSON = JSON.parse(data);
+
+    // find the corresponding form of the id
+    const form = dataJSON.find((form: Form) => form.formId === formId);
+    if (form) {
+      return form;
+    }
+  }
+};
+
+const saveFormData = (formData: Form) => {
+  const data = localStorage.getItem("forms");
+  if (data) {
+    const dataJSON = JSON.parse(data);
+    const newData = dataJSON.map((form: Form) => {
+      if (form.formId === formData.formId) {
+        return formData;
+      }
+
+      return form;
+    });
+
+    localStorage.setItem("forms", JSON.stringify(newData));
+  }
+};
+
 export default function FormBuilder(props: { formId: string }) {
-  // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 
   useEffect(() => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-
-      // find the corresponding form of the id
-      const form = dataJSON.find((form: Form) => form.formId === props.formId);
-      if (form) {
-        setFormData(form);
-      }
-    }
+    const form = loadFormData(props.formId);
+    setFormData(form);
   }, [props.formId]);
 
+  // auto save form data
   useEffect(() => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-      const newData = dataJSON.map((form: Form) => {
-        if (form.formId === formData.formId) {
-          return formData;
-        }
-
-        return form;
-      });
-
-      localStorage.setItem("forms", JSON.stringify(newData));
-    }
+    saveFormData(formData);
   }, [formData]);
+
+  // manually save form data
+  const manualSave = () => {
+    saveFormData(formData);
+  };
 
   const deleteFieldCB = (id: string) => {
     setFormData({
@@ -161,22 +175,6 @@ export default function FormBuilder(props: { formId: string }) {
         return field;
       }),
     });
-  };
-
-  const manualSave = () => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-      const newData = dataJSON.map((form: Form) => {
-        if (form.formId === formData.formId) {
-          return formData;
-        }
-
-        return form;
-      });
-
-      localStorage.setItem("forms", JSON.stringify(newData));
-    }
   };
 
   const handleFieldTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
