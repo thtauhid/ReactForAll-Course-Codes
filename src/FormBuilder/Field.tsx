@@ -1,15 +1,15 @@
 import { FormField, TextField, RadioField, DropdownField } from "../types";
 
 type Props = {
-  deleteFieldCB(id: string): void;
-  handleTitleChangeCB(id: string, label: string): void;
+  deleteFieldCB(fieldId: string): void;
+  handleTitleChangeCB(fieldId: string, label: string): void;
   handleOptionValueChangeCB(
-    id: string,
+    fieldId: string,
     optionIndex: number,
     value: string
   ): void;
-  addOptionCB(id: string): void;
-  deleteOptionCB(id: string, optionIndex: number): void;
+  addOptionCB(fieldId: string): void;
+  deleteOptionCB(fieldId: string, optionIndex: number): void;
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
@@ -19,7 +19,7 @@ export default function Field(props: { data: FormField; cb: Props }) {
         <div className='flex my-8'>
           <RegularInput data={props.data} cb={props.cb} />
           <DeleteButton
-            id={props.data.id}
+            fieldId={props.data.fieldId}
             deleteFieldCB={props.cb.deleteFieldCB}
           />
         </div>
@@ -29,7 +29,7 @@ export default function Field(props: { data: FormField; cb: Props }) {
         <div className='flex my-8'>
           <MultiOptionInput data={props.data} cb={props.cb} />
           <DeleteButton
-            id={props.data.id}
+            fieldId={props.data.fieldId}
             deleteFieldCB={props.cb.deleteFieldCB}
           />
         </div>
@@ -40,7 +40,7 @@ export default function Field(props: { data: FormField; cb: Props }) {
         <div className='flex my-8'>
           <MultiOptionInput data={props.data} cb={props.cb} />
           <DeleteButton
-            id={props.data.id}
+            fieldId={props.data.fieldId}
             deleteFieldCB={props.cb.deleteFieldCB}
           />
         </div>
@@ -58,7 +58,7 @@ const RegularInput = (props: { data: TextField; cb: Props }) => {
       <input
         value={props.data.label}
         onChange={(e) => {
-          props.cb.handleTitleChangeCB(props.data.id, e.target.value);
+          props.cb.handleTitleChangeCB(props.data.fieldId, e.target.value);
         }}
         type='text'
         id={props.data.label}
@@ -80,7 +80,7 @@ const MultiOptionInput = (props: {
         type='text'
         value={props.data.label}
         onChange={(e) => {
-          props.cb.handleTitleChangeCB(props.data.id, e.target.value);
+          props.cb.handleTitleChangeCB(props.data.fieldId, e.target.value);
         }}
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
       />
@@ -100,7 +100,7 @@ const MultiOptionInput = (props: {
               value={option}
               onChange={(e) => {
                 props.cb.handleOptionValueChangeCB(
-                  props.data.id,
+                  props.data.fieldId,
                   props.data.options.indexOf(option),
                   e.target.value
                 );
@@ -108,7 +108,7 @@ const MultiOptionInput = (props: {
               className='p-2 border border-gray-300 mt-1 rounded-md focus:outline-none focus:border-blue-500 flex-1'
             />
             <DeleteOptionButton
-              id={props.data.id}
+              fieldId={props.data.fieldId}
               optionIndex={props.data.options.indexOf(option)}
               deleteOptionCB={props.cb.deleteOptionCB}
             />
@@ -122,7 +122,10 @@ const MultiOptionInput = (props: {
         </div>
       )}
 
-      <AddOptionButton id={props.data.id} addOptionCB={props.cb.addOptionCB} />
+      <AddOptionButton
+        fieldId={props.data.fieldId}
+        addOptionCB={props.cb.addOptionCB}
+      />
     </div>
   );
 };
@@ -149,14 +152,14 @@ const MultiOptionInput = (props: {
 // }
 
 function DeleteButton(props: {
-  id: string;
-  deleteFieldCB: (id: string) => void;
+  fieldId: string;
+  deleteFieldCB: (fieldId: string) => void;
 }) {
   return (
     <button
       type='button'
       className='ml-2 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600'
-      onClick={() => props.deleteFieldCB(props.id)}
+      onClick={() => props.deleteFieldCB(props.fieldId)}
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'
@@ -177,15 +180,15 @@ function DeleteButton(props: {
 }
 
 const AddOptionButton = (props: {
-  id: string;
-  addOptionCB: (id: string) => void;
+  fieldId: string;
+  addOptionCB: (fieldId: string) => void;
 }) => {
   return (
     <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
       <button
         type='button'
         className='flex-1 ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-        onClick={() => props.addOptionCB(props.id)}
+        onClick={() => props.addOptionCB(props.fieldId)}
       >
         New Option
       </button>
@@ -194,15 +197,15 @@ const AddOptionButton = (props: {
 };
 
 const DeleteOptionButton = (props: {
-  id: string;
+  fieldId: string;
   optionIndex: number;
-  deleteOptionCB: (id: string, index: number) => void;
+  deleteOptionCB: (fieldId: string, index: number) => void;
 }) => {
   return (
     <button
       type='button'
       className='ml-2 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600'
-      onClick={() => props.deleteOptionCB(props.id, props.optionIndex)}
+      onClick={() => props.deleteOptionCB(props.fieldId, props.optionIndex)}
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'

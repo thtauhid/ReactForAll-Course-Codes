@@ -7,12 +7,12 @@ import { Link } from "raviger";
 import { v4 as uuidv4 } from "uuid";
 
 const formInitialData: Form = {
-  id: uuidv4(),
+  formId: uuidv4(),
   title: "Untitled Form",
   fields: [
     {
       kind: "text",
-      id: uuidv4(),
+      fieldId: uuidv4(),
       label: "First Name",
       fieldType: "text",
       value: "",
@@ -30,7 +30,7 @@ export default function FormBuilder(props: { formId: string }) {
       const dataJSON = JSON.parse(data);
 
       // find the corresponding form of the id
-      const form = dataJSON.find((form: Form) => form.id === props.formId);
+      const form = dataJSON.find((form: Form) => form.formId === props.formId);
       if (form) {
         setFormData(form);
       }
@@ -42,7 +42,7 @@ export default function FormBuilder(props: { formId: string }) {
     if (data) {
       const dataJSON = JSON.parse(data);
       const newData = dataJSON.map((form: Form) => {
-        if (form.id === formData.id) {
+        if (form.formId === formData.formId) {
           return formData;
         }
 
@@ -56,7 +56,7 @@ export default function FormBuilder(props: { formId: string }) {
   const deleteFieldCB = (id: string) => {
     setFormData({
       ...formData,
-      fields: formData.fields.filter((field) => field.id !== id),
+      fields: formData.fields.filter((field) => field.fieldId !== id),
     });
   };
 
@@ -70,7 +70,7 @@ export default function FormBuilder(props: { formId: string }) {
       case "dropdown":
         newField = {
           kind: "dropdown",
-          id: uuidv4(),
+          fieldId: uuidv4(),
           label: newFieldLabel,
           options: ["Option 1", "Option 2", "Option 3"],
           value: [],
@@ -79,7 +79,7 @@ export default function FormBuilder(props: { formId: string }) {
       case "radio":
         newField = {
           kind: "radio",
-          id: uuidv4(),
+          fieldId: uuidv4(),
           label: newFieldLabel,
           options: ["Option 1", "Option 2", "Option 3"],
           value: "",
@@ -88,7 +88,7 @@ export default function FormBuilder(props: { formId: string }) {
       default:
         newField = {
           kind: "text",
-          id: uuidv4(),
+          fieldId: uuidv4(),
           label: newFieldLabel,
           fieldType: newFieldType,
           value: "",
@@ -110,7 +110,7 @@ export default function FormBuilder(props: { formId: string }) {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.id === id) {
+        if (field.fieldId === id) {
           return {
             ...field,
             label,
@@ -128,7 +128,7 @@ export default function FormBuilder(props: { formId: string }) {
     value: string
   ) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
+      (field) => field.fieldId === id
     ) as DropdownField;
 
     formField.options[optionIndex] = value;
@@ -136,7 +136,7 @@ export default function FormBuilder(props: { formId: string }) {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.id === id) {
+        if (field.fieldId === id) {
           return formField;
         }
 
@@ -150,7 +150,7 @@ export default function FormBuilder(props: { formId: string }) {
     if (data) {
       const dataJSON = JSON.parse(data);
       const newData = dataJSON.map((form: Form) => {
-        if (form.id === formData.id) {
+        if (form.formId === formData.formId) {
           return formData;
         }
 
@@ -167,7 +167,7 @@ export default function FormBuilder(props: { formId: string }) {
 
   const addOptionCB = (id: string) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
+      (field) => field.fieldId === id
     ) as DropdownField;
 
     formField.options.push(`Option ${formField.options.length + 1}`);
@@ -175,7 +175,7 @@ export default function FormBuilder(props: { formId: string }) {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.id === id) {
+        if (field.fieldId === id) {
           return formField;
         }
 
@@ -186,7 +186,7 @@ export default function FormBuilder(props: { formId: string }) {
 
   const deleteOptionCB = (id: string, optionIndex: number) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
+      (field) => field.fieldId === id
     ) as DropdownField;
 
     formField.options.splice(optionIndex, 1);
@@ -194,7 +194,7 @@ export default function FormBuilder(props: { formId: string }) {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.id === id) {
+        if (field.fieldId === id) {
           return formField;
         }
 
@@ -218,7 +218,7 @@ export default function FormBuilder(props: { formId: string }) {
       {formData.fields.map((field) => {
         return (
           <Field
-            key={field.id}
+            key={field.fieldId}
             data={field}
             cb={{
               deleteFieldCB,
@@ -298,13 +298,13 @@ export default function FormBuilder(props: { formId: string }) {
         <input
           type='text'
           className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
-          value={`http://localhost:3000/preview/${formData.id}`}
+          value={`http://localhost:3000/preview/${formData.formId}`}
           readOnly
         />
         <Link
           type='button'
           className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          href={`/preview/${formData.id}`}
+          href={`/preview/${formData.formId}`}
           target='_blank'
         >
           <svg

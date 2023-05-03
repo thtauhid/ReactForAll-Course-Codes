@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function PreviewForm(props: { formId: string }) {
   const [formData, setFormData] = useState<Form>({
-    id: props.formId,
+    formId: props.formId,
     title: "Loading...",
     fields: [],
   }); // contains the form data (title, fields, etc.)
@@ -22,7 +22,7 @@ export default function PreviewForm(props: { formId: string }) {
 
     // find the corresponding form of the id
     const dataJSON = JSON.parse(data);
-    const form = dataJSON.find((form: Form) => form.id === props.formId);
+    const form = dataJSON.find((form: Form) => form.formId === props.formId);
     if (!form) return navigate("/404");
 
     // set the form data
@@ -90,8 +90,8 @@ export default function PreviewForm(props: { formId: string }) {
   const submitForm = () => {
     // compile form meta data and response data
     const formResponse: FormResponse = {
-      id: uuidv4(),
-      formId: formData.id,
+      responseId: uuidv4(),
+      formId: formData.formId,
       fields: responseData,
     };
 
