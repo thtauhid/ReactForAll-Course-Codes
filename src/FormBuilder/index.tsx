@@ -347,13 +347,16 @@ export default function FormBuilder(props: { formId: string }) {
         <button
           type='button'
           className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          onClick={() =>
+          onClick={() => {
             dispatch({
               type: "ADD_FIELD",
               fieldType: newFieldType,
               label: newFieldLabel,
-            })
-          }
+            });
+
+            setNewFieldLabel("");
+            setNewFieldType("text");
+          }}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
