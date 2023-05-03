@@ -1,15 +1,15 @@
 import { FormField, TextField, RadioField, DropdownField } from "../types";
 
 type Props = {
-  deleteFieldCB(id: number): void;
-  handleTitleChangeCB(id: number, label: string): void;
+  deleteFieldCB(id: string): void;
+  handleTitleChangeCB(id: string, label: string): void;
   handleOptionValueChangeCB(
-    id: number,
+    id: string,
     optionIndex: number,
     value: string
   ): void;
-  addOptionCB(id: number): void;
-  deleteOptionCB(id: number, optionIndex: number): void;
+  addOptionCB(id: string): void;
+  deleteOptionCB(id: string, optionIndex: number): void;
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
@@ -149,8 +149,8 @@ const MultiOptionInput = (props: {
 // }
 
 function DeleteButton(props: {
-  id: number;
-  deleteFieldCB: (id: number) => void;
+  id: string;
+  deleteFieldCB: (id: string) => void;
 }) {
   return (
     <button
@@ -177,8 +177,8 @@ function DeleteButton(props: {
 }
 
 const AddOptionButton = (props: {
-  id: number;
-  addOptionCB: (id: number) => void;
+  id: string;
+  addOptionCB: (id: string) => void;
 }) => {
   return (
     <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
@@ -194,9 +194,9 @@ const AddOptionButton = (props: {
 };
 
 const DeleteOptionButton = (props: {
-  id: number;
+  id: string;
   optionIndex: number;
-  deleteOptionCB: (id: number, index: number) => void;
+  deleteOptionCB: (id: string, index: number) => void;
 }) => {
   return (
     <button

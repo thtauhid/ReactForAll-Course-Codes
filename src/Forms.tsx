@@ -1,57 +1,58 @@
 import { useEffect, useState } from "react";
 import { Form } from "./types";
 import { Link } from "raviger";
+import { v4 as uuidv4 } from "uuid";
 
 const sampleFormData: Form[] = [
   {
-    id: 1,
+    id: uuidv4(),
     title: "Test Form",
     fields: [
       {
         kind: "text",
-        id: 1,
+        id: uuidv4(),
         label: "Full name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 2,
+        id: uuidv4(),
         label: "Enrolment Number",
         fieldType: "number",
         value: "",
       },
       {
         kind: "text",
-        id: 3,
+        id: uuidv4(),
         label: "Phone Number",
         fieldType: "tel",
         value: "",
       },
       {
         kind: "text",
-        id: 4,
+        id: uuidv4(),
         label: "Email",
         fieldType: "email",
         value: "",
       },
       {
         kind: "text",
-        id: 5,
+        id: uuidv4(),
         label: "Password",
         fieldType: "password",
         value: "",
       },
       {
         kind: "text",
-        id: 6,
+        id: uuidv4(),
         label: "Date of Birth",
         fieldType: "date",
         value: "",
       },
       {
         kind: "text",
-        id: 7,
+        id: uuidv4(),
         label: "Comments",
         fieldType: "textarea",
         value: "",
@@ -59,33 +60,33 @@ const sampleFormData: Form[] = [
     ],
   },
   {
-    id: 2,
+    id: uuidv4(),
     title: "Personal Data Collection Form",
     fields: [
       {
         kind: "text",
-        id: 1,
+        id: uuidv4(),
         label: "Full name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 2,
+        id: uuidv4(),
         label: "Fathers name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 3,
+        id: uuidv4(),
         label: "Mothers Name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 4,
+        id: uuidv4(),
         label: "Email",
         fieldType: "email",
         value: "",
@@ -110,7 +111,7 @@ export default function Forms() {
 
   const addFormCB = () => {
     const newForm: Form = {
-      id: Number(new Date()),
+      id: uuidv4(),
       title: "Untitled Form",
       fields: [],
     };
@@ -119,7 +120,7 @@ export default function Forms() {
     localStorage.setItem("forms", JSON.stringify(newForms));
   };
 
-  const deleteFormCB = (id: number) => {
+  const deleteFormCB = (id: string) => {
     const newForms = forms.filter((form) => form.id !== id);
     setForms(newForms);
     localStorage.setItem("forms", JSON.stringify(newForms));
@@ -161,7 +162,7 @@ export default function Forms() {
 
 function FormCard(props: {
   formData: Form;
-  deleteFormCB: (id: number) => void;
+  deleteFormCB: (id: string) => void;
   addFormCB: () => void;
 }) {
   return (

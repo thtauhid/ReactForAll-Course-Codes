@@ -4,13 +4,15 @@ import Field from "./Field";
 import { Form, FieldTypes, FormField, DropdownField } from "../types";
 import { Link } from "raviger";
 
+import { v4 as uuidv4 } from "uuid";
+
 const formInitialData: Form = {
-  id: Number(new Date()),
+  id: uuidv4(),
   title: "Untitled Form",
   fields: [
     {
       kind: "text",
-      id: 1,
+      id: uuidv4(),
       label: "First Name",
       fieldType: "text",
       value: "",
@@ -18,7 +20,7 @@ const formInitialData: Form = {
   ],
 };
 
-export default function FormBuilder(props: { formId: number }) {
+export default function FormBuilder(props: { formId: string }) {
   // const [forms, setForms] = useState<Form[]>([]);
   const [formData, setFormData] = useState<Form>(formInitialData);
 
@@ -51,7 +53,7 @@ export default function FormBuilder(props: { formId: number }) {
     }
   }, [formData]);
 
-  const deleteFieldCB = (id: number) => {
+  const deleteFieldCB = (id: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.filter((field) => field.id !== id),
@@ -68,7 +70,7 @@ export default function FormBuilder(props: { formId: number }) {
       case "dropdown":
         newField = {
           kind: "dropdown",
-          id: formData.fields.length + 1,
+          id: uuidv4(),
           label: newFieldLabel,
           options: ["Option 1", "Option 2", "Option 3"],
           value: [],
@@ -77,7 +79,7 @@ export default function FormBuilder(props: { formId: number }) {
       case "radio":
         newField = {
           kind: "radio",
-          id: formData.fields.length + 1,
+          id: uuidv4(),
           label: newFieldLabel,
           options: ["Option 1", "Option 2", "Option 3"],
           value: "",
@@ -86,7 +88,7 @@ export default function FormBuilder(props: { formId: number }) {
       default:
         newField = {
           kind: "text",
-          id: formData.fields.length + 1,
+          id: uuidv4(),
           label: newFieldLabel,
           fieldType: newFieldType,
           value: "",
@@ -104,7 +106,7 @@ export default function FormBuilder(props: { formId: number }) {
     setNewFieldType("text");
   };
 
-  const handleTitleChangeCB = (id: number, label: string) => {
+  const handleTitleChangeCB = (id: string, label: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
@@ -121,7 +123,7 @@ export default function FormBuilder(props: { formId: number }) {
   };
 
   const handleOptionValueChangeCB = (
-    id: number,
+    id: string,
     optionIndex: number,
     value: string
   ) => {
@@ -163,7 +165,7 @@ export default function FormBuilder(props: { formId: number }) {
     setNewFieldType(e.currentTarget.value as FieldTypes);
   };
 
-  const addOptionCB = (id: number) => {
+  const addOptionCB = (id: string) => {
     let formField: DropdownField = formData.fields.find(
       (field) => field.id === id
     ) as DropdownField;
@@ -182,7 +184,7 @@ export default function FormBuilder(props: { formId: number }) {
     });
   };
 
-  const deleteOptionCB = (id: number, optionIndex: number) => {
+  const deleteOptionCB = (id: string, optionIndex: number) => {
     let formField: DropdownField = formData.fields.find(
       (field) => field.id === id
     ) as DropdownField;

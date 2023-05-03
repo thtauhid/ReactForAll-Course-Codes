@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Form, ResponseField, FormResponse } from "../types";
 import { navigate } from "raviger";
 import Field from "./Field";
+import { v4 as uuidv4 } from "uuid";
 
-export default function PreviewForm(props: { formId: number }) {
+export default function PreviewForm(props: { formId: string }) {
   const [formData, setFormData] = useState<Form>({
     id: props.formId,
     title: "Loading...",
@@ -89,7 +90,7 @@ export default function PreviewForm(props: { formId: number }) {
   const submitForm = () => {
     // compile form meta data and response data
     const formResponse: FormResponse = {
-      id: Number(new Date()),
+      id: uuidv4(),
       formId: formData.id,
       fields: responseData,
     };

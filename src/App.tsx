@@ -11,10 +11,10 @@ import ErrorPage from "./ErrorPage";
 const routes = {
   "/": () => <Forms />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
-    <FormBuilder formId={Number(formId)} />
+    <FormBuilder formId={formId} />
   ),
   "/preview/:formId": ({ formId }: { formId: string }) => (
-    <PreviewForm formId={Number(formId)} />
+    <PreviewForm formId={formId} />
   ),
   "/*": () => <ErrorPage />,
 };
