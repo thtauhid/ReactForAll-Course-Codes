@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Field from "./Field";
 
 import { Form, FieldTypes, FormField, DropdownField } from "../types/formTypes";
-import { Link } from "raviger";
+import { Link, navigate } from "raviger";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -31,6 +31,8 @@ const loadFormData = (formId: string) => {
       return form;
     }
   }
+
+  navigate("/404");
 };
 
 const saveFormData = (formData: Form) => {
@@ -128,7 +130,7 @@ export default function FormBuilder(props: { formId: string }) {
     setNewFieldType("text");
   };
 
-  const handleTitleChangeCB = (id: string, label: string) => {
+  const changeLabelCB = (id: string, label: string) => {
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
@@ -144,7 +146,7 @@ export default function FormBuilder(props: { formId: string }) {
     });
   };
 
-  const handleOptionValueChangeCB = (
+  const changeOptionValueCB = (
     fieldid: string,
     optionId: string,
     value: string
@@ -243,11 +245,11 @@ export default function FormBuilder(props: { formId: string }) {
             key={field.fieldId}
             data={field}
             cb={{
+              changeLabelCB,
               deleteFieldCB,
-              handleTitleChangeCB,
-              handleOptionValueChangeCB,
               addOptionCB,
               deleteOptionCB,
+              changeOptionValueCB,
             }}
           />
         );

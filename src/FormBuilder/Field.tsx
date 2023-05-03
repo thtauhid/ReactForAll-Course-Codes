@@ -6,15 +6,11 @@ import {
 } from "../types/formTypes";
 
 type Props = {
+  changeLabelCB(fieldId: string, label: string): void;
   deleteFieldCB(fieldId: string): void;
-  handleTitleChangeCB(fieldId: string, label: string): void;
-  handleOptionValueChangeCB(
-    fieldId: string,
-    optionId: string,
-    value: string
-  ): void;
   addOptionCB(fieldId: string): void;
   deleteOptionCB(fieldId: string, optionId: string): void;
+  changeOptionValueCB(fieldId: string, optionId: string, value: string): void;
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
@@ -63,7 +59,7 @@ const RegularInput = (props: { data: TextField; cb: Props }) => {
       <input
         value={props.data.label}
         onChange={(e) => {
-          props.cb.handleTitleChangeCB(props.data.fieldId, e.target.value);
+          props.cb.changeLabelCB(props.data.fieldId, e.target.value);
         }}
         type='text'
         id={props.data.label}
@@ -85,7 +81,7 @@ const MultiOptionInput = (props: {
         type='text'
         value={props.data.label}
         onChange={(e) => {
-          props.cb.handleTitleChangeCB(props.data.fieldId, e.target.value);
+          props.cb.changeLabelCB(props.data.fieldId, e.target.value);
         }}
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
       />
@@ -101,7 +97,7 @@ const MultiOptionInput = (props: {
               type='text'
               value={option.value}
               onChange={(e) => {
-                props.cb.handleOptionValueChangeCB(
+                props.cb.changeOptionValueCB(
                   props.data.fieldId,
                   option.optionId,
                   e.target.value
