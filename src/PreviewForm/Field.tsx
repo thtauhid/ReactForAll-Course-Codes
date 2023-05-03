@@ -6,6 +6,7 @@ import {
   TextField,
   DropdownField as IDropdownField,
   RadioField as IRadioField,
+  Option,
 } from "../types/formTypes";
 
 type Props = {
@@ -78,10 +79,6 @@ const DropdownField = (props: Props) => {
     value: string;
   };
 
-  const options = fieldData.options.map((value: string) => ({
-    value,
-  }));
-
   const handleChange = (selectedList: Option[]) => {
     const selectedOptions = selectedList.map((option: Option) => option.value);
     console.log(selectedOptions);
@@ -94,7 +91,7 @@ const DropdownField = (props: Props) => {
       <label htmlFor={fieldData.label}>{fieldData.label}</label>
       <Multiselect
         displayValue='value'
-        options={options}
+        options={fieldData.options}
         showCheckbox
         onSelect={handleChange}
         onRemove={handleChange}
@@ -110,17 +107,17 @@ const RadioField = (props: Props) => {
   return (
     <>
       <label htmlFor={fieldData.label}>{fieldData.label}</label>
-      {fieldData.options.map((option: string) => (
-        <div key={option}>
+      {fieldData.options.map((option: Option) => (
+        <div key={option.optionId}>
           <input
             type='radio'
             name={fieldData.label}
-            id={option}
-            value={option}
+            id={option.optionId}
+            value={option.value}
             className='mr-2'
             onChange={props.updateFieldDataCB}
           />
-          <label htmlFor={option}>{option}</label>
+          <label htmlFor={option.optionId}>{option.value}</label>
         </div>
       ))}
     </>

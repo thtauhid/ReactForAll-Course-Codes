@@ -10,11 +10,11 @@ type Props = {
   handleTitleChangeCB(fieldId: string, label: string): void;
   handleOptionValueChangeCB(
     fieldId: string,
-    optionIndex: number,
+    optionId: string,
     value: string
   ): void;
   addOptionCB(fieldId: string): void;
-  deleteOptionCB(fieldId: string, optionIndex: number): void;
+  deleteOptionCB(fieldId: string, optionId: string): void;
 };
 
 export default function Field(props: { data: FormField; cb: Props }) {
@@ -96,17 +96,14 @@ const MultiOptionInput = (props: {
 
       {props.data.options.map((option) => {
         return (
-          <div
-            className='flex items-center'
-            key={props.data.options.indexOf(option)}
-          >
+          <div className='flex items-center' key={option.optionId}>
             <input
               type='text'
-              value={option}
+              value={option.value}
               onChange={(e) => {
                 props.cb.handleOptionValueChangeCB(
                   props.data.fieldId,
-                  props.data.options.indexOf(option),
+                  option.optionId,
                   e.target.value
                 );
               }}
@@ -114,7 +111,7 @@ const MultiOptionInput = (props: {
             />
             <DeleteOptionButton
               fieldId={props.data.fieldId}
-              optionIndex={props.data.options.indexOf(option)}
+              optionId={option.optionId}
               deleteOptionCB={props.cb.deleteOptionCB}
             />
           </div>
@@ -203,14 +200,14 @@ const AddOptionButton = (props: {
 
 const DeleteOptionButton = (props: {
   fieldId: string;
-  optionIndex: number;
-  deleteOptionCB: (fieldId: string, index: number) => void;
+  optionId: string;
+  deleteOptionCB: (fieldId: string, optionId: string) => void;
 }) => {
   return (
     <button
       type='button'
       className='ml-2 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600'
-      onClick={() => props.deleteOptionCB(props.fieldId, props.optionIndex)}
+      onClick={() => props.deleteOptionCB(props.fieldId, props.optionId)}
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'

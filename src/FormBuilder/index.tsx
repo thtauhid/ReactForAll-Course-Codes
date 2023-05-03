@@ -72,7 +72,11 @@ export default function FormBuilder(props: { formId: string }) {
           kind: "dropdown",
           fieldId: uuidv4(),
           label: newFieldLabel,
-          options: ["Option 1", "Option 2", "Option 3"],
+          options: [
+            { optionId: uuidv4(), value: "Option 1" },
+            { optionId: uuidv4(), value: "Option 2" },
+            { optionId: uuidv4(), value: "Option 3" },
+          ],
           value: [],
         };
         break;
@@ -81,7 +85,11 @@ export default function FormBuilder(props: { formId: string }) {
           kind: "radio",
           fieldId: uuidv4(),
           label: newFieldLabel,
-          options: ["Option 1", "Option 2", "Option 3"],
+          options: [
+            { optionId: uuidv4(), value: "Option 1" },
+            { optionId: uuidv4(), value: "Option 2" },
+            { optionId: uuidv4(), value: "Option 3" },
+          ],
           value: "",
         };
         break;
@@ -123,20 +131,30 @@ export default function FormBuilder(props: { formId: string }) {
   };
 
   const handleOptionValueChangeCB = (
-    id: string,
-    optionIndex: number,
+    fieldid: string,
+    optionId: string,
     value: string
   ) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.fieldId === id
+      (field) => field.fieldId === fieldid
     ) as DropdownField;
 
-    formField.options[optionIndex] = value;
+    // formField.options[optionIndex] = value;
+    formField.options = formField.options.map((option) => {
+      if (option.optionId === optionId) {
+        return {
+          ...option,
+          value,
+        };
+      }
+
+      return option;
+    });
 
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.fieldId === id) {
+        if (field.fieldId === fieldid) {
           return formField;
         }
 
@@ -165,17 +183,21 @@ export default function FormBuilder(props: { formId: string }) {
     setNewFieldType(e.currentTarget.value as FieldTypes);
   };
 
-  const addOptionCB = (id: string) => {
+  const addOptionCB = (fieldId: string) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.fieldId === id
+      (field) => field.fieldId === fieldId
     ) as DropdownField;
 
-    formField.options.push(`Option ${formField.options.length + 1}`);
+    // formField.options.push(`Option ${formField.options.length + 1}`);
+    formField.options.push({
+      optionId: uuidv4(),
+      value: "New Option",
+    });
 
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.fieldId === id) {
+        if (field.fieldId === fieldId) {
           return formField;
         }
 
@@ -184,17 +206,19 @@ export default function FormBuilder(props: { formId: string }) {
     });
   };
 
-  const deleteOptionCB = (id: string, optionIndex: number) => {
+  const deleteOptionCB = (fieldId: string, optionId: string) => {
     let formField: DropdownField = formData.fields.find(
-      (field) => field.fieldId === id
+      (field) => field.fieldId === fieldId
     ) as DropdownField;
 
-    formField.options.splice(optionIndex, 1);
+    formField.options = formField.options.filter(
+      (option) => option.optionId !== optionId
+    );
 
     setFormData({
       ...formData,
       fields: formData.fields.map((field) => {
-        if (field.fieldId === id) {
+        if (field.fieldId === fieldId) {
           return formField;
         }
 

@@ -9,6 +9,11 @@ export type TextFieldTypes =
 
 export type FieldTypes = TextFieldTypes | "dropdown" | "radio";
 
+export type Option = {
+  optionId: string;
+  value: string;
+};
+
 export type TextField = {
   kind: "text";
   fieldId: string;
@@ -21,7 +26,7 @@ export type DropdownField = {
   kind: "dropdown";
   fieldId: string;
   label: string;
-  options: string[];
+  options: Option[];
   value: string[];
 };
 
@@ -29,7 +34,7 @@ export type RadioField = {
   kind: "radio";
   fieldId: string;
   label: string;
-  options: string[];
+  options: Option[];
   value: string;
 };
 
