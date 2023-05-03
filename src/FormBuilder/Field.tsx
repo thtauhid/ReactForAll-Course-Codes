@@ -1,4 +1,9 @@
-import { FormField, TextField, RadioField, DropdownField } from "../types";
+import {
+  FormField,
+  TextField,
+  RadioField,
+  DropdownField,
+} from "../types/formTypes";
 
 type Props = {
   deleteFieldCB(fieldId: string): void;

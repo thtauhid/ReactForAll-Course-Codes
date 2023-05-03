@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form } from "./types";
+import { Form } from "./types/formTypes";
 import { Link } from "raviger";
 import { v4 as uuidv4 } from "uuid";
 

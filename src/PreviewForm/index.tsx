@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, ResponseField, FormResponse } from "../types";
+import { Form, ResponseField, FormResponse } from "../types/formTypes";
 import { navigate } from "raviger";
 import Field from "./Field";
 import { v4 as uuidv4 } from "uuid";
