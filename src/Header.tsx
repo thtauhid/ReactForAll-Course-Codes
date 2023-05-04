@@ -7,7 +7,7 @@ const menuItems = [
   { name: "Login", href: "/login" },
 ];
 
-export default function Header(props: { title: string }) {
+export default function Header() {
   return (
     <div className='flex gap-2 items-center'>
       <Link href='/'>
