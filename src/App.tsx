@@ -7,9 +7,12 @@ import AppContainer from "./AppContainer";
 import Header from "./Header";
 import Forms from "./Forms";
 import ErrorPage from "./ErrorPage";
+import Login from "./components/Login";
 
+// TODO: move route handling to router
 const routes = {
   "/": () => <Forms />,
+  "/login": () => <Login />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
     <FormBuilder formId={formId} />
   ),
