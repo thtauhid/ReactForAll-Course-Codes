@@ -1,7 +1,7 @@
 import { useRoutes } from "raviger";
 
-import FormBuilder from "./FormBuilder";
-import PreviewForm from "./PreviewForm/index";
+import FormBuilder from "./components/FormBuilder";
+import PreviewForm from "./components/PreviewForm";
 
 import AppContainer from "./AppContainer";
 import Header from "./Header";

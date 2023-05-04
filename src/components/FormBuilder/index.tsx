@@ -1,7 +1,12 @@
 import { useEffect, useReducer, useState } from "react";
 import Field from "./Field";
 
-import { Form, FieldTypes, FormField, DropdownField } from "../types/formTypes";
+import {
+  Form,
+  FieldTypes,
+  FormField,
+  DropdownField,
+} from "../../types/formTypes";
 import { Link, navigate } from "raviger";
 
 import { v4 as uuidv4 } from "uuid";

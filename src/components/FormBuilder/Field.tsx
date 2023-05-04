@@ -3,7 +3,7 @@ import {
   TextField,
   RadioField,
   DropdownField,
-} from "../types/formTypes";
+} from "../../types/formTypes";
 
 type Props = {
   changeLabelCB(fieldId: string, label: string): void;
