@@ -9,9 +9,14 @@ export type TextFieldTypes =
 
 export type FieldTypes = TextFieldTypes | "dropdown" | "radio";
 
+export type Option = {
+  optionId: string;
+  value: string;
+};
+
 export type TextField = {
   kind: "text";
-  id: number;
+  fieldId: string;
   label: string;
   fieldType: TextFieldTypes;
   value: string;
@@ -19,24 +24,24 @@ export type TextField = {
 
 export type DropdownField = {
   kind: "dropdown";
-  id: number;
+  fieldId: string;
   label: string;
-  options: string[];
+  options: Option[];
   value: string[];
 };
 
 export type RadioField = {
   kind: "radio";
-  id: number;
+  fieldId: string;
   label: string;
-  options: string[];
+  options: Option[];
   value: string;
 };
 
 export type FormField = TextField | DropdownField | RadioField;
 
 export interface Form {
-  id: number;
+  formId: string;
   title: string;
   fields: FormField[];
 }
@@ -56,7 +61,7 @@ export type MultiValueResponseField = {
 export type ResponseField = SingleValueResponseField | MultiValueResponseField;
 
 export type FormResponse = {
-  id: number;
-  formId: number;
+  responseId: string;
+  formId: string;
   fields: ResponseField[];
 };

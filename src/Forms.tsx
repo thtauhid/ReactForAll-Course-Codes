@@ -1,57 +1,58 @@
 import { useEffect, useState } from "react";
-import { Form } from "./types";
+import { Form } from "./types/formTypes";
 import { Link } from "raviger";
+import { v4 as uuidv4 } from "uuid";
 
 const sampleFormData: Form[] = [
   {
-    id: 1,
+    formId: uuidv4(),
     title: "Test Form",
     fields: [
       {
         kind: "text",
-        id: 1,
+        fieldId: uuidv4(),
         label: "Full name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 2,
+        fieldId: uuidv4(),
         label: "Enrolment Number",
         fieldType: "number",
         value: "",
       },
       {
         kind: "text",
-        id: 3,
+        fieldId: uuidv4(),
         label: "Phone Number",
         fieldType: "tel",
         value: "",
       },
       {
         kind: "text",
-        id: 4,
+        fieldId: uuidv4(),
         label: "Email",
         fieldType: "email",
         value: "",
       },
       {
         kind: "text",
-        id: 5,
+        fieldId: uuidv4(),
         label: "Password",
         fieldType: "password",
         value: "",
       },
       {
         kind: "text",
-        id: 6,
+        fieldId: uuidv4(),
         label: "Date of Birth",
         fieldType: "date",
         value: "",
       },
       {
         kind: "text",
-        id: 7,
+        fieldId: uuidv4(),
         label: "Comments",
         fieldType: "textarea",
         value: "",
@@ -59,33 +60,33 @@ const sampleFormData: Form[] = [
     ],
   },
   {
-    id: 2,
+    formId: uuidv4(),
     title: "Personal Data Collection Form",
     fields: [
       {
         kind: "text",
-        id: 1,
+        fieldId: uuidv4(),
         label: "Full name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 2,
+        fieldId: uuidv4(),
         label: "Fathers name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 3,
+        fieldId: uuidv4(),
         label: "Mothers Name",
         fieldType: "text",
         value: "",
       },
       {
         kind: "text",
-        id: 4,
+        fieldId: uuidv4(),
         label: "Email",
         fieldType: "email",
         value: "",
@@ -110,7 +111,7 @@ export default function Forms() {
 
   const addFormCB = () => {
     const newForm: Form = {
-      id: Number(new Date()),
+      formId: uuidv4(),
       title: "Untitled Form",
       fields: [],
     };
@@ -119,8 +120,8 @@ export default function Forms() {
     localStorage.setItem("forms", JSON.stringify(newForms));
   };
 
-  const deleteFormCB = (id: number) => {
-    const newForms = forms.filter((form) => form.id !== id);
+  const deleteFormCB = (id: string) => {
+    const newForms = forms.filter((form) => form.formId !== id);
     setForms(newForms);
     localStorage.setItem("forms", JSON.stringify(newForms));
   };
@@ -129,7 +130,7 @@ export default function Forms() {
     <>
       {forms.map((form) => (
         <FormCard
-          key={form.id}
+          key={form.formId}
           formData={form}
           deleteFormCB={deleteFormCB}
           addFormCB={addFormCB}
@@ -161,7 +162,7 @@ export default function Forms() {
 
 function FormCard(props: {
   formData: Form;
-  deleteFormCB: (id: number) => void;
+  deleteFormCB: (id: string) => void;
   addFormCB: () => void;
 }) {
   return (
@@ -170,7 +171,7 @@ function FormCard(props: {
       <div className='flex'>
         <Link
           className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
-          href={`/forms/${props.formData.id}`}
+          href={`/forms/${props.formData.formId}`}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -194,7 +195,7 @@ function FormCard(props: {
         </Link>
         <button
           className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
-          onClick={() => props.deleteFormCB(props.formData.id)}
+          onClick={() => props.deleteFormCB(props.formData.formId)}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

@@ -1,97 +1,40 @@
-import { useEffect, useState } from "react";
-import { Form, ResponseField, FormResponse } from "../types";
+import { useReducer } from "react";
+import { Form, ResponseField, FormResponse } from "../types/formTypes";
 import { navigate } from "raviger";
 import Field from "./Field";
+import { v4 as uuidv4 } from "uuid";
 
-export default function PreviewForm(props: { formId: number }) {
-  const [formData, setFormData] = useState<Form>({
-    id: props.formId,
-    title: "Loading...",
-    fields: [],
-  }); // contains the form data (title, fields, etc.)
-  const [responseData, setResponseData] = useState<ResponseField[]>([]); // contains the response data (label, value)
+const loadFormFromLocalStorage = (formId: string) => {
+  const data = localStorage.getItem("forms");
+  if (!data) return navigate("/404");
 
-  const [currentField, setCurrentField] = useState<number>(0); // the current field being displayed
+  // find the corresponding form of the id
+  const dataJSON = JSON.parse(data);
+  const form = dataJSON.find((form: Form) => form.formId === formId);
+  if (!form) return navigate("/404");
 
-  // Get form data from localstorage
-  useEffect(() => {
-    // get form data from localstorage
-    const data = localStorage.getItem("forms");
-    if (!data) return navigate("/404");
+  return form;
+};
 
-    // find the corresponding form of the id
-    const dataJSON = JSON.parse(data);
-    const form = dataJSON.find((form: Form) => form.id === props.formId);
-    if (!form) return navigate("/404");
-
-    // set the form data
-    setFormData(form);
-
-    // Prepare the form data for preview (no metadata, just the fields)
-    const fieldInitialData: ResponseField[] = form.fields.map(
-      (field: ResponseField) => ({
-        label: field.label,
-        value: "",
-      })
-    );
-
-    setResponseData(fieldInitialData);
-  }, [props.formId]);
-
-  // update field/option data
-  const updateFieldDataCB = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    // get the current response data
-    let newResponseData = [...responseData];
-
-    // update the response data
-    newResponseData[currentField] = {
-      label: formData.fields[currentField].label,
-      value: (event.target as HTMLInputElement).value,
-    };
-
-    // set the response data
-    setResponseData(newResponseData);
-
-    console.table(newResponseData);
+const loadInitialState = (formId: string) => {
+  const form = loadFormFromLocalStorage(formId);
+  return {
+    currentField: 0,
+    formData: form,
+    responseData: form.fields.map((field: ResponseField) => ({
+      label: field.label,
+      value: "",
+    })),
   };
+};
 
-  const updateMultiselectDataCB = (selectedList: string[]) => {
-    // get the current response data
-    let newResponseData = [...responseData];
-
-    // update the response data
-    newResponseData[currentField] = {
-      label: formData.fields[currentField].label,
-      value: selectedList,
-    };
-
-    // set the response data
-    setResponseData(newResponseData);
-
-    console.log(newResponseData);
-  };
-
-  // next field
-  const nextField = () => {
-    setCurrentField(currentField + 1);
-  };
-
-  // previous field
-  const previousField = () => {
-    setCurrentField(currentField - 1);
-  };
-
-  // submit form
-  const submitForm = () => {
+const saveFormResponseToLocalStorage = (state: Prop) => {
+  try {
     // compile form meta data and response data
     const formResponse: FormResponse = {
-      id: Number(new Date()),
-      formId: formData.id,
-      fields: responseData,
+      responseId: uuidv4(),
+      formId: state.formData.formId,
+      fields: state.responseData,
     };
 
     // get form responses from localstorage
@@ -107,18 +50,113 @@ export default function PreviewForm(props: { formId: number }) {
       localStorage.setItem("responses", JSON.stringify(dataJSON));
     }
 
-    // show alert to user
-    alert("Form submitted!");
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 
-    // redirect to home page on click of ok
-    navigate("/");
+type Prop = {
+  currentField: number;
+  formData: Form;
+  responseData: ResponseField[];
+};
+
+type UpdateFieldAction = {
+  type: "UPDATE_FIELD";
+  // label: string;
+  value: string;
+};
+
+type UpdateMultiselectFieldAction = {
+  type: "UPDATE_MULTISELECT_FIELD";
+  selectedList: string[];
+};
+
+type NextFieldAction = {
+  type: "NEXT_FIELD";
+};
+
+type PreviousFieldAction = {
+  type: "PREVIOUS_FIELD";
+};
+
+type FormAction =
+  | UpdateFieldAction
+  | UpdateMultiselectFieldAction
+  | NextFieldAction
+  | PreviousFieldAction;
+
+const reducer = (state: Prop, action: FormAction) => {
+  switch (action.type) {
+    case "UPDATE_FIELD": {
+      let newResponseData = [...state.responseData];
+
+      // update the response data
+      newResponseData[state.currentField] = {
+        label: state.formData.fields[state.currentField].label,
+        value: action.value,
+      };
+
+      return {
+        ...state,
+        responseData: newResponseData,
+      };
+    }
+    case "UPDATE_MULTISELECT_FIELD": {
+      let newResponseData = [...state.responseData];
+
+      // update the response data
+      newResponseData[state.currentField] = {
+        label: state.formData.fields[state.currentField].label,
+        value: action.selectedList,
+      };
+
+      return {
+        ...state,
+        responseData: newResponseData,
+      };
+    }
+    case "NEXT_FIELD": {
+      return {
+        ...state,
+        currentField: state.currentField + 1,
+      };
+    }
+    case "PREVIOUS_FIELD": {
+      return {
+        ...state,
+        currentField: state.currentField - 1,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+export default function PreviewForm(props: { formId: string }) {
+  const [state, dispatch] = useReducer(reducer, null, () =>
+    loadInitialState(props.formId)
+  );
+
+  // submit form
+  const submitForm = () => {
+    const isFormSaved = saveFormResponseToLocalStorage(state);
+
+    if (isFormSaved) {
+      alert("Form submitted!");
+      navigate("/");
+    } else {
+      alert("Error submitting form!");
+    }
   };
 
   // check if all the multiselect fields have at least two option in it
   const checkMultiValueFieldHasAtleastTwoOptions = () => {
     // if there are multiselect fields, check if they have at least two options
     let check = true;
-    formData.fields.forEach((field) => {
+    state.formData.fields.forEach((field) => {
       if (
         (field.kind === "dropdown" || field.kind === "radio") &&
         field.options.length < 2
@@ -142,17 +180,31 @@ export default function PreviewForm(props: { formId: number }) {
 
   return (
     <>
-      <h1 className='text-center font-bold text-3xl'>{formData.title}</h1>
+      <h1 className='text-center font-bold text-3xl'>{state.formData.title}</h1>
       <div className='my-4 border border-stone-500'></div>
       <div className='flex flex-col'>
-        {responseData.length > 0 ? (
+        {state.responseData.length > 0 ? (
           <Field
-            fieldData={formData.fields[currentField]}
-            responseData={responseData[currentField]}
-            updateFieldDataCB={updateFieldDataCB}
-            updateMultiselectDataCB={updateMultiselectDataCB}
+            fieldData={state.formData.fields[state.currentField]}
+            responseData={state.responseData[state.currentField]}
+            updateFieldDataCB={(
+              event:
+                | React.ChangeEvent<HTMLInputElement>
+                | React.ChangeEvent<HTMLTextAreaElement>
+            ) => {
+              dispatch({
+                type: "UPDATE_FIELD",
+                value: (event.target as HTMLInputElement).value,
+              });
+            }}
+            updateMultiselectDataCB={(selectedList: string[]) => {
+              dispatch({
+                type: "UPDATE_MULTISELECT_FIELD",
+                selectedList: selectedList,
+              });
+            }}
           />
-        ) : responseData.length === 0 ? (
+        ) : state.responseData.length === 0 ? (
           <div className='text-center'>No fields found</div>
         ) : (
           <div className='text-center'>Loading...</div>
@@ -160,25 +212,29 @@ export default function PreviewForm(props: { formId: number }) {
       </div>
       <div className='my-4 border border-stone-500'></div>
       <div className='flex items-center justify-between'>
-        {currentField === 0 ? (
+        {state.currentField === 0 ? (
           <div></div>
         ) : (
           <button
-            onClick={previousField}
+            onClick={() => {
+              dispatch({ type: "PREVIOUS_FIELD" });
+            }}
             className='p-2 text-white bg-yellow-500 rounded-md hover:bg-yellow-600 focus:outline-none focus:bg-yellow-600 text-center'
           >
             Previous
           </button>
         )}
 
-        {currentField < formData.fields.length - 1 ? (
+        {state.currentField < state.formData.fields.length - 1 ? (
           <button
-            onClick={nextField}
+            onClick={() => {
+              dispatch({ type: "NEXT_FIELD" });
+            }}
             className='p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 text-center'
           >
             Next
           </button>
-        ) : currentField === formData.fields.length - 1 ? (
+        ) : state.currentField === state.formData.fields.length - 1 ? (
           <button
             onClick={submitForm}
             className='p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600 text-center'

@@ -1,204 +1,266 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import Field from "./Field";
 
-import { Form, FieldTypes, FormField, DropdownField } from "../types";
-import { Link } from "raviger";
+import { Form, FieldTypes, FormField, DropdownField } from "../types/formTypes";
+import { Link, navigate } from "raviger";
 
-const formInitialData: Form = {
-  id: Number(new Date()),
-  title: "Untitled Form",
-  fields: [
-    {
-      kind: "text",
-      id: 1,
-      label: "First Name",
-      fieldType: "text",
-      value: "",
-    },
-  ],
+import { v4 as uuidv4 } from "uuid";
+
+const loadFormData = (formId: string) => {
+  const data = localStorage.getItem("forms");
+  if (data) {
+    const dataJSON = JSON.parse(data);
+
+    // find the corresponding form of the id
+    const form = dataJSON.find((form: Form) => form.formId === formId);
+    if (form) {
+      return form;
+    }
+  }
+
+  navigate("/404");
 };
 
-export default function FormBuilder(props: { formId: number }) {
-  // const [forms, setForms] = useState<Form[]>([]);
-  const [formData, setFormData] = useState<Form>(formInitialData);
-
-  useEffect(() => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-
-      // find the corresponding form of the id
-      const form = dataJSON.find((form: Form) => form.id === props.formId);
-      if (form) {
-        setFormData(form);
+const saveFormData = (formData: Form) => {
+  const data = localStorage.getItem("forms");
+  if (data) {
+    const dataJSON = JSON.parse(data);
+    const newData = dataJSON.map((form: Form) => {
+      if (form.formId === formData.formId) {
+        return formData;
       }
-    }
-  }, [props.formId]);
 
-  useEffect(() => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-      const newData = dataJSON.map((form: Form) => {
-        if (form.id === formData.id) {
-          return formData;
+      return form;
+    });
+
+    localStorage.setItem("forms", JSON.stringify(newData));
+  }
+};
+
+const createFormField = (fieldType: FieldTypes, label: string) => {
+  let newField: FormField;
+
+  switch (fieldType) {
+    case "dropdown":
+      newField = {
+        kind: "dropdown",
+        fieldId: uuidv4(),
+        label,
+        options: [
+          { optionId: uuidv4(), value: "Option 1" },
+          { optionId: uuidv4(), value: "Option 2" },
+          { optionId: uuidv4(), value: "Option 3" },
+        ],
+        value: [],
+      };
+      break;
+    case "radio":
+      newField = {
+        kind: "radio",
+        fieldId: uuidv4(),
+        label,
+        options: [
+          { optionId: uuidv4(), value: "Option 1" },
+          { optionId: uuidv4(), value: "Option 2" },
+          { optionId: uuidv4(), value: "Option 3" },
+        ],
+        value: "",
+      };
+      break;
+    default:
+      newField = {
+        kind: "text",
+        fieldId: uuidv4(),
+        label,
+        fieldType,
+        value: "",
+      };
+  }
+
+  return newField;
+};
+
+type UpdateTitleAction = {
+  type: "UPDATE_TITLE";
+  title: string;
+};
+
+type AddFieldAction = {
+  type: "ADD_FIELD";
+  fieldType: FieldTypes;
+  label: string;
+};
+type RemoveFieldAction = {
+  type: "REMOVE_FIELD";
+  fieldId: string;
+};
+
+type UpdateFieldLabelAction = {
+  type: "UPDATE_FIELD_LABEL";
+  fieldId: string;
+  label: string;
+};
+
+type AddOptionAction = {
+  type: "ADD_OPTION";
+  fieldId: string;
+};
+
+type RemoveOptionAction = {
+  type: "REMOVE_OPTION";
+  fieldId: string;
+  optionId: string;
+};
+
+type UpdateOptionAction = {
+  type: "UPDATE_OPTION";
+  fieldId: string;
+  optionId: string;
+  value: string;
+};
+
+type FormAction =
+  | UpdateTitleAction
+  | AddFieldAction
+  | RemoveFieldAction
+  | UpdateFieldLabelAction
+  | AddOptionAction
+  | RemoveOptionAction
+  | UpdateOptionAction;
+
+const reducer = (state: Form, action: FormAction) => {
+  switch (action.type) {
+    case "UPDATE_TITLE": {
+      return {
+        ...state,
+        title: action.title,
+      };
+    }
+    case "ADD_FIELD": {
+      const newField = createFormField(action.fieldType, action.label);
+
+      return {
+        ...state,
+        fields: [...state.fields, newField],
+      };
+    }
+    case "REMOVE_FIELD": {
+      return {
+        ...state,
+        fields: state.fields.filter(
+          (field) => field.fieldId !== action.fieldId
+        ),
+      };
+    }
+    case "UPDATE_FIELD_LABEL": {
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.fieldId === action.fieldId) {
+            return {
+              ...field,
+              label: action.label,
+            };
+          }
+
+          return field;
+        }),
+      };
+    }
+    case "ADD_OPTION": {
+      let formField: DropdownField = state.fields.find(
+        (field) => field.fieldId === action.fieldId
+      ) as DropdownField;
+
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.fieldId === action.fieldId) {
+            return {
+              ...field,
+              options: [
+                ...formField.options,
+                { optionId: uuidv4(), value: "New Option" },
+              ],
+            };
+          }
+
+          return field;
+        }),
+      };
+    }
+    case "REMOVE_OPTION": {
+      let formField: DropdownField = state.fields.find(
+        (field) => field.fieldId === action.fieldId
+      ) as DropdownField;
+
+      formField.options = formField.options.filter(
+        (option) => option.optionId !== action.optionId
+      );
+
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.fieldId === action.fieldId) {
+            return formField;
+          }
+
+          return field;
+        }),
+      };
+    }
+    case "UPDATE_OPTION": {
+      let formField: DropdownField = state.fields.find(
+        (field) => field.fieldId === action.fieldId
+      ) as DropdownField;
+
+      formField.options = formField.options.map((option) => {
+        if (option.optionId === action.optionId) {
+          return {
+            ...option,
+            value: action.value,
+          };
         }
 
-        return form;
+        return option;
       });
 
-      localStorage.setItem("forms", JSON.stringify(newData));
-    }
-  }, [formData]);
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.fieldId === action.fieldId) {
+            return formField;
+          }
 
-  const deleteFieldCB = (id: number) => {
-    setFormData({
-      ...formData,
-      fields: formData.fields.filter((field) => field.id !== id),
-    });
+          return field;
+        }),
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+export default function FormBuilder(props: { formId: string }) {
+  const [state, dispatch] = useReducer(reducer, null, () =>
+    loadFormData(props.formId)
+  );
+
+  // auto save form data
+  useEffect(() => {
+    saveFormData(state);
+  }, [state]);
+
+  // manually save form data
+  const manualSave = () => {
+    saveFormData(state);
   };
 
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [newFieldType, setNewFieldType] = useState<FieldTypes>("text");
 
-  const addFormField = () => {
-    let newField: FormField;
-
-    switch (newFieldType) {
-      case "dropdown":
-        newField = {
-          kind: "dropdown",
-          id: formData.fields.length + 1,
-          label: newFieldLabel,
-          options: ["Option 1", "Option 2", "Option 3"],
-          value: [],
-        };
-        break;
-      case "radio":
-        newField = {
-          kind: "radio",
-          id: formData.fields.length + 1,
-          label: newFieldLabel,
-          options: ["Option 1", "Option 2", "Option 3"],
-          value: "",
-        };
-        break;
-      default:
-        newField = {
-          kind: "text",
-          id: formData.fields.length + 1,
-          label: newFieldLabel,
-          fieldType: newFieldType,
-          value: "",
-        };
-    }
-
-    const newFieldData: Form = {
-      ...formData,
-      fields: [...formData.fields, newField],
-    };
-
-    setFormData(newFieldData);
-
-    setNewFieldLabel("");
-    setNewFieldType("text");
-  };
-
-  const handleTitleChangeCB = (id: number, label: string) => {
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => {
-        if (field.id === id) {
-          return {
-            ...field,
-            label,
-          };
-        }
-
-        return field;
-      }),
-    });
-  };
-
-  const handleOptionValueChangeCB = (
-    id: number,
-    optionIndex: number,
-    value: string
-  ) => {
-    let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
-    ) as DropdownField;
-
-    formField.options[optionIndex] = value;
-
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => {
-        if (field.id === id) {
-          return formField;
-        }
-
-        return field;
-      }),
-    });
-  };
-
-  const manualSave = () => {
-    const data = localStorage.getItem("forms");
-    if (data) {
-      const dataJSON = JSON.parse(data);
-      const newData = dataJSON.map((form: Form) => {
-        if (form.id === formData.id) {
-          return formData;
-        }
-
-        return form;
-      });
-
-      localStorage.setItem("forms", JSON.stringify(newData));
-    }
-  };
-
   const handleFieldTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
     setNewFieldType(e.currentTarget.value as FieldTypes);
-  };
-
-  const addOptionCB = (id: number) => {
-    let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
-    ) as DropdownField;
-
-    formField.options.push(`Option ${formField.options.length + 1}`);
-
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => {
-        if (field.id === id) {
-          return formField;
-        }
-
-        return field;
-      }),
-    });
-  };
-
-  const deleteOptionCB = (id: number, optionIndex: number) => {
-    let formField: DropdownField = formData.fields.find(
-      (field) => field.id === id
-    ) as DropdownField;
-
-    formField.options.splice(optionIndex, 1);
-
-    setFormData({
-      ...formData,
-      fields: formData.fields.map((field) => {
-        if (field.id === id) {
-          return formField;
-        }
-
-        return field;
-      }),
-    });
   };
 
   return (
@@ -207,23 +269,53 @@ export default function FormBuilder(props: { formId: number }) {
         type='text'
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 w-full text-3xl '
         placeholder='Form Title'
-        value={formData.title}
-        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        value={state.title}
+        onChange={(e) =>
+          dispatch({ type: "UPDATE_TITLE", title: e.target.value })
+        }
       />
 
       <div className='mt-4 border border-stone-500'></div>
 
-      {formData.fields.map((field) => {
+      {state.fields.map((field) => {
         return (
           <Field
-            key={field.id}
+            key={field.fieldId}
             data={field}
             cb={{
-              deleteFieldCB,
-              handleTitleChangeCB,
-              handleOptionValueChangeCB,
-              addOptionCB,
-              deleteOptionCB,
+              changeLabelCB: (fieldId: string, label: string) => {
+                dispatch({
+                  type: "UPDATE_FIELD_LABEL",
+                  fieldId,
+                  label,
+                });
+              },
+              deleteFieldCB: (fieldId: string) => {
+                dispatch({ type: "REMOVE_FIELD", fieldId });
+              },
+              addOptionCB: (fieldId: string) => {
+                dispatch({ type: "ADD_OPTION", fieldId });
+              },
+
+              deleteOptionCB: (fieldId: string, optionId: string) => {
+                dispatch({
+                  type: "REMOVE_OPTION",
+                  fieldId,
+                  optionId,
+                });
+              },
+              changeOptionValueCB: (
+                fieldId: string,
+                optionId: string,
+                value: string
+              ) => {
+                dispatch({
+                  type: "UPDATE_OPTION",
+                  fieldId,
+                  optionId,
+                  value,
+                });
+              },
             }}
           />
         );
@@ -256,7 +348,16 @@ export default function FormBuilder(props: { formId: number }) {
         <button
           type='button'
           className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          onClick={addFormField}
+          onClick={() => {
+            dispatch({
+              type: "ADD_FIELD",
+              fieldType: newFieldType,
+              label: newFieldLabel,
+            });
+
+            setNewFieldLabel("");
+            setNewFieldType("text");
+          }}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -296,13 +397,13 @@ export default function FormBuilder(props: { formId: number }) {
         <input
           type='text'
           className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
-          value={`http://localhost:3000/preview/${formData.id}`}
+          value={`http://localhost:3000/preview/${state.formId}`}
           readOnly
         />
         <Link
           type='button'
           className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-          href={`/preview/${formData.id}`}
+          href={`/preview/${state.formId}`}
           target='_blank'
         >
           <svg
