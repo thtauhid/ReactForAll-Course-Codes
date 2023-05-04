@@ -25,7 +25,7 @@ function App() {
   return (
     <AppContainer>
       <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl min-w-[34%]'>
-        <Header title='Level 5: Types in Depth and Variants' />
+        <Header title='Level 6: Managing Complex States' />
         {route}
       </div>
     </AppContainer>
