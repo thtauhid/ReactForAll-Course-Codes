@@ -172,16 +172,17 @@ const reducer = (state: Form, action: FormAction) => {
         (field) => field.fieldId === action.fieldId
       ) as DropdownField;
 
-      formField.options = [
-        ...formField.options,
-        { optionId: uuidv4(), value: "New Option" },
-      ];
-
       return {
         ...state,
         fields: state.fields.map((field) => {
           if (field.fieldId === action.fieldId) {
-            return formField;
+            return {
+              ...field,
+              options: [
+                ...formField.options,
+                { optionId: uuidv4(), value: "New Option" },
+              ],
+            };
           }
 
           return field;
