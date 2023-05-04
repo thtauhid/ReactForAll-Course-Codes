@@ -1,5 +1,11 @@
-import { Link } from "raviger";
+import { ActiveLink, Link } from "raviger";
 import logo from "./logo.svg";
+
+const menuItems = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Login", href: "/login" },
+];
 
 export default function Header(props: { title: string }) {
   return (
@@ -12,7 +18,23 @@ export default function Header(props: { title: string }) {
           style={{ animation: "spin 2s linear infinite" }}
         />
       </Link>
-      <h1 className='text-center text-xl flex-1'>{props.title}</h1>
+
+      <div className='flex gap-5 items-center'>
+        {
+          /* Menu */
+
+          menuItems.map((item) => (
+            <ActiveLink
+              key={item.name}
+              href={item.href}
+              className='text-xl'
+              exactActiveClass='text-blue-600'
+            >
+              {item.name}
+            </ActiveLink>
+          ))
+        }
+      </div>
     </div>
   );
 }
