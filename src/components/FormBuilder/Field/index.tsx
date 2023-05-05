@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { Field as IField } from "../../../types/formTypes";
 import AddOption from "./AddOption";
+import { updateLabel } from "../../../utils/apiUtils";
+import TextInput from "./TextInput";
 
 type Props = {
+  form_pk: number;
   data: IField;
 };
 
@@ -10,7 +14,7 @@ export default function Field(props: Props) {
     case "TEXT":
       return (
         <div className='flex my-8'>
-          <RegularInput {...props} />
+          <TextInput {...props} />
         </div>
       );
     case "DROPDOWN":
@@ -30,20 +34,6 @@ export default function Field(props: Props) {
       return null;
   }
 }
-
-const RegularInput = (props: Props) => {
-  return (
-    <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
-      <p className='m-2 text-stone-600'>{props.data.kind}</p>
-      <input
-        value={props.data.label}
-        type='text'
-        id={props.data.label}
-        className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
-      />
-    </div>
-  );
-};
 
 const MultiOptionInput = (props: Props) => {
   return (

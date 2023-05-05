@@ -35,7 +35,7 @@ export default function NewFormBuilder(props: { form_pk: number }) {
 
       <div className='mt-4 border border-stone-500'></div>
       {fields.map((field) => {
-        return <Field key={field.id} data={field} />;
+        return <Field key={field.id} form_pk={props.form_pk} data={field} />;
       })}
       <div className='mt-4 border border-stone-500'></div>
 

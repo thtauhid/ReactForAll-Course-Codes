@@ -73,6 +73,14 @@ export const loadFormFields = async (form_pk: number) => {
   return await request(`forms/${form_pk}/fields/`, "GET");
 };
 
+export const updateLabel = async (
+  form_pk: number,
+  id: number,
+  label: string
+) => {
+  return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { label });
+};
+
 export const addOption = async (
   form_pk: number,
   id: number,
