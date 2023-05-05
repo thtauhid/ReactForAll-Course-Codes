@@ -1,5 +1,5 @@
 import { Pagination, PaginationParams } from "../types/common";
-import { Form } from "../types/formTypes";
+import { Field, Form } from "../types/formTypes";
 
 const BASE_URL = "https://tsapi.coronasafe.live/api/";
 
@@ -67,4 +67,16 @@ export const loadForm = async (id: number) => {
 
 export const createNewField = async (form_pk: number, field: any) => {
   return await request(`forms/${form_pk}/fields/`, "POST", field);
+};
+
+export const loadFormFields = async (form_pk: number) => {
+  return await request(`forms/${form_pk}/fields/`, "GET");
+};
+
+export const addOption = async (
+  form_pk: number,
+  id: number,
+  options: Field["options"]
+) => {
+  return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { options });
 };

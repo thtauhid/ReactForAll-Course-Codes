@@ -282,7 +282,7 @@ export default function FormBuilder(props: { formId: string }) {
 
       <div className='mt-4 border border-stone-500'></div>
 
-      {state.fields.map((field) => {
+      {/* {state.fields.map((field) => {
         return (
           <Field
             key={field.fieldId}
@@ -324,7 +324,7 @@ export default function FormBuilder(props: { formId: string }) {
             }}
           />
         );
-      })}
+      })} */}
       <div className='flex mt-4 py-4 border-y-2 border-dashed border-stone-400'>
         <select
           id='type'
