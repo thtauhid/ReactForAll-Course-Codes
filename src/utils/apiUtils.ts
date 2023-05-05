@@ -1,4 +1,4 @@
-import { Form } from "../types/formFields";
+import { Form } from "../types/formTypes";
 
 const BASE_URL = "https://tsapi.coronasafe.live/api/";
 

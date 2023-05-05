@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form } from "../types/formFields";
+import { Form, validateForm } from "../types/formTypes";
 import { createForm } from "../utils/apiUtils";
 import { navigate } from "raviger";
 
@@ -10,8 +10,17 @@ export default function CreateForm() {
     is_public: false,
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const validation = validateForm(form);
+
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      return;
+    }
 
     const response = await createForm(form);
 
@@ -20,6 +29,16 @@ export default function CreateForm() {
 
   return (
     <form className='flex flex-col' onSubmit={handleSubmit}>
+      <h1 className='text-2xl font-bold text-center'>Create Form</h1>
+      {
+        /* Errors */
+
+        Object.keys(errors).map((key) => (
+          <div className='bg-red-500 text-white p-2 rounded m-2' key={key}>
+            {errors[key]}
+          </div>
+        ))
+      }
       <div className='flex flex-col p-2 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
         <label htmlFor='title'>Title</label>
         <input
