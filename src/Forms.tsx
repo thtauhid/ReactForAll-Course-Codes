@@ -1,130 +1,21 @@
 import { useEffect, useState } from "react";
-import { Form } from "./types/oldFormTypes";
+import { Form } from "./types/formTypes";
 import { Link } from "raviger";
-import { v4 as uuidv4 } from "uuid";
+import { listForms } from "./utils/apiUtils";
+import { Pagination } from "./types/common";
 
-const sampleFormData: Form[] = [
-  {
-    formId: uuidv4(),
-    title: "Test Form",
-    fields: [
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Full name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Enrolment Number",
-        fieldType: "number",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Phone Number",
-        fieldType: "tel",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Email",
-        fieldType: "email",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Password",
-        fieldType: "password",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Date of Birth",
-        fieldType: "date",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Comments",
-        fieldType: "textarea",
-        value: "",
-      },
-    ],
-  },
-  {
-    formId: uuidv4(),
-    title: "Personal Data Collection Form",
-    fields: [
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Full name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Fathers name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Mothers Name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Email",
-        fieldType: "email",
-        value: "",
-      },
-    ],
-  },
-];
+const getForms = async (setFormsCB: (value: Form[]) => void) => {
+  const data: Pagination<Form> = await listForms({ limit: 10, offset: 0 });
+
+  setFormsCB(data.results);
+};
 
 export default function Forms() {
   const [forms, setForms] = useState<Form[]>([]);
 
   useEffect(() => {
-    const data = localStorage.getItem("forms");
-
-    if (!data) {
-      localStorage.setItem("forms", JSON.stringify(sampleFormData));
-    } else {
-      const dataJSON = JSON.parse(data);
-      setForms(dataJSON);
-    }
+    getForms(setForms);
   }, []);
-
-  const addFormCB = () => {
-    const newForm: Form = {
-      formId: uuidv4(),
-      title: "Untitled Form",
-      fields: [],
-    };
-    const newForms = [...forms, newForm];
-    setForms(newForms);
-    localStorage.setItem("forms", JSON.stringify(newForms));
-  };
-
-  const deleteFormCB = (id: string) => {
-    const newForms = forms.filter((form) => form.formId !== id);
-    setForms(newForms);
-    localStorage.setItem("forms", JSON.stringify(newForms));
-  };
 
   return (
     <>
@@ -151,49 +42,20 @@ export default function Forms() {
         </Link>
       </div>
       {forms.map((form) => (
-        <FormCard
-          key={form.formId}
-          formData={form}
-          deleteFormCB={deleteFormCB}
-          addFormCB={addFormCB}
-        />
+        <FormCard key={form.id} formData={form} />
       ))}
-
-      <button
-        className='flex justify-center items-center w-full p-3 bg-blue-500 rounded text-white'
-        onClick={addFormCB}
-      >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='w-6 h-6'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M12 6v6m0 0v6m0-6h6m-6 0H6'
-          />
-        </svg>
-      </button>
     </>
   );
 }
 
-function FormCard(props: {
-  formData: Form;
-  deleteFormCB: (id: string) => void;
-  addFormCB: () => void;
-}) {
+function FormCard(props: { formData: Form }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
       <h2 className='text-xl'>{props.formData.title}</h2>
       <div className='flex'>
         <Link
           className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
-          href={`/forms/${props.formData.formId}`}
+          href={`/form/${props.formData.id}`}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -215,10 +77,7 @@ function FormCard(props: {
             />
           </svg>
         </Link>
-        <button
-          className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
-          onClick={() => props.deleteFormCB(props.formData.formId)}
-        >
+        <button className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
