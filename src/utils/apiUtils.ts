@@ -1,3 +1,5 @@
+import { Form } from "../types/formFields";
+
 const BASE_URL = "https://tsapi.coronasafe.live/api/";
 
 type RequestMethods = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -46,4 +48,8 @@ export const me = async () => {
 
 export const login = async (username: string, password: string) => {
   return await request("auth-token/", "POST", { username, password });
+};
+
+export const createForm = async (form: Form) => {
+  return await request("forms/", "POST", form);
 };

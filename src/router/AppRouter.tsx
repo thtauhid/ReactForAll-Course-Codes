@@ -6,10 +6,12 @@ import Login from "../components/Login";
 
 import FormBuilder from "../components/FormBuilder";
 import PreviewForm from "../components/PreviewForm";
+import CreateForm from "../components/CreateForm";
 
 const routes = {
   "/": () => <Forms />,
   "/login": () => <Login />,
+  "/forms/create": () => <CreateForm />,
   "/forms/:formId": ({ formId }: { formId: string }) => (
     <FormBuilder formId={formId} />
   ),
