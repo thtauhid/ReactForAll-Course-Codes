@@ -6,7 +6,7 @@ import {
   FieldTypes,
   FormField,
   DropdownField,
-} from "../../types/formTypes";
+} from "../../types/oldFormTypes";
 import { Link, navigate } from "raviger";
 
 import { v4 as uuidv4 } from "uuid";

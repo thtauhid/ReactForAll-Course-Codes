@@ -7,7 +7,7 @@ import {
   DropdownField as IDropdownField,
   RadioField as IRadioField,
   Option,
-} from "../../types/formTypes";
+} from "../../types/oldFormTypes";
 
 type Props = {
   fieldData: FormField;
