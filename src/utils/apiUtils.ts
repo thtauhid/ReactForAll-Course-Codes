@@ -59,3 +59,8 @@ export const listForms = async (pageParams: PaginationParams) => {
   const forms: Pagination<Form> = await request("forms/", "GET", pageParams);
   return forms;
 };
+
+export const loadForm = async (id: number) => {
+  const form: Form = await request(`forms/${id}/`, "GET");
+  return form;
+};
