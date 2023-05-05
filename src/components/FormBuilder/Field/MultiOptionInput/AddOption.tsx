@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Field } from "../../../types/formTypes";
-import { addOption } from "../../../utils/apiUtils";
+import { Field } from "../../../../types/formTypes";
+import { addOption } from "../../../../utils/apiUtils";
 
 type Props = {
   data: Field;
