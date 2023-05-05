@@ -20,7 +20,7 @@ function App() {
 
   return (
     <AppContainer>
-      <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl w-[34%]'>
+      <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl w-[50%]'>
         <Header currentUser={currentUser} />
         <AppRouter />
       </div>

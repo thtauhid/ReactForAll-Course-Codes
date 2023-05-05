@@ -5,6 +5,14 @@ export type Form = {
   is_public?: boolean;
 };
 
+export type Field = {
+  id?: number;
+  label: string;
+  kind: "TEXT" | "DROPDOWN" | "RADIO";
+  options?: string[];
+  value?: string;
+};
+
 export type Error<T> = Partial<Record<keyof T, string>>;
 
 export const validateForm = (form: Form) => {

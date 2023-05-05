@@ -64,3 +64,7 @@ export const loadForm = async (id: number) => {
   const form: Form = await request(`forms/${id}/`, "GET");
   return form;
 };
+
+export const createNewField = async (form_pk: number, field: any) => {
+  return await request(`forms/${form_pk}/fields/`, "POST", field);
+};
