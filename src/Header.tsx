@@ -1,23 +1,23 @@
-import { ActiveLink, Link } from "raviger";
+import { ActiveLink, navigate } from "raviger";
 import logo from "./logo.svg";
+import { User } from "./types/userTypes";
 
 const menuItems = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
-  { name: "Login", href: "/login" },
 ];
 
-export default function Header() {
+export default function Header(props: { currentUser: User }) {
   return (
     <div className='flex gap-2 items-center'>
-      <Link href='/'>
+      <ActiveLink href='/'>
         <img
           src={logo}
           className='animate-spin h-16 w-16'
           alt='logo'
           style={{ animation: "spin 2s linear infinite" }}
         />
-      </Link>
+      </ActiveLink>
 
       <div className='flex gap-5 items-center'>
         {
@@ -33,6 +33,30 @@ export default function Header() {
               {item.name}
             </ActiveLink>
           ))
+        }
+
+        {
+          /* User */
+          props.currentUser?.username?.length > 0 ? (
+            <button
+              className='text-xl'
+              onClick={() => {
+                localStorage.removeItem("token");
+                navigate("/login");
+                window.location.reload();
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <ActiveLink
+              href='/login'
+              className='text-xl'
+              exactActiveClass='text-blue-600'
+            >
+              Login
+            </ActiveLink>
+          )
         }
       </div>
     </div>
