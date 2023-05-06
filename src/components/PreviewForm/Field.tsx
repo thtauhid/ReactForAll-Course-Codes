@@ -1,33 +1,31 @@
 import Multiselect from "multiselect-react-dropdown";
 
-import {
-  FormField,
-  ResponseField,
-  TextField,
-  DropdownField as IDropdownField,
-  RadioField as IRadioField,
-  Option,
-} from "../../types/oldFormTypes";
+// import {
+//   FormField,
+//   ResponseField,
+//   Option,
+// } from "../../types/oldFormTypes";
+import { Field as IField, Submission } from "../../types/formTypes";
 
 type Props = {
-  fieldData: FormField;
-  responseData: ResponseField;
+  fieldData: IField;
+  responseData: Submission["answers"][number];
   updateFieldDataCB: (
     event:
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
-  updateMultiselectDataCB: (selectedList: string[]) => void;
+  updateMultiselectDataCB: (selectedOption: string) => void;
 };
 
 export default function Field(props: Props) {
   switch (props.fieldData.kind) {
-    case "text":
+    case "TEXT":
       return <TextFields {...props} />;
-    case "dropdown":
+    case "DROPDOWN":
       return <DropdownField {...props} />;
-    case "radio":
-      return <RadioField {...props} />;
+    // case "RADIO":
+    //   return <RadioField {...props} />;
     default:
       return <div></div>;
   }
@@ -35,33 +33,12 @@ export default function Field(props: Props) {
 
 const TextFields = (props: Props) => {
   // type cast to TextField
-  const fieldData = props.fieldData as TextField;
 
-  switch (fieldData.fieldType) {
-    case "textarea":
-      return <TextAreaField {...props} />;
-    default:
-      return (
-        <>
-          <label htmlFor={fieldData.label}>{fieldData.label}</label>
-          <input
-            type={fieldData.fieldType}
-            name={fieldData.label}
-            id={fieldData.label}
-            className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
-            onChange={props.updateFieldDataCB}
-            value={props.responseData.value}
-          />
-        </>
-      );
-  }
-};
-
-const TextAreaField = (props: Props) => {
   return (
     <>
       <label htmlFor={props.fieldData.label}>{props.fieldData.label}</label>
-      <textarea
+      <input
+        type='text'
         name={props.fieldData.label}
         id={props.fieldData.label}
         className='mt-2 p-2 border border-stone-500 rounded-md focus:outline-none focus:border-blue-500'
@@ -73,53 +50,59 @@ const TextAreaField = (props: Props) => {
 };
 
 const DropdownField = (props: Props) => {
-  const fieldData = props.fieldData as IDropdownField;
-
   type Option = {
     value: string;
   };
 
-  const handleChange = (selectedList: Option[]) => {
-    const selectedOptions = selectedList.map((option: Option) => option.value);
-    console.log(selectedOptions);
+  const options = props.fieldData.options?.map((option) => {
+    return {
+      value: option,
+    };
+  });
 
-    props.updateMultiselectDataCB(selectedOptions);
+  const handleChange = (_: Option[], selectedOption: Option) => {
+    console.log(selectedOption);
+
+    props.updateMultiselectDataCB(selectedOption.value);
   };
 
   return (
     <>
-      <label htmlFor={fieldData.label}>{fieldData.label}</label>
+      <label htmlFor={props.fieldData.label}>{props.fieldData.label}</label>
       <Multiselect
         displayValue='value'
-        options={fieldData.options}
-        showCheckbox
+        options={options}
         onSelect={handleChange}
         onRemove={handleChange}
         showArrow
+        singleSelect
+        emptyRecordMsg='Select Option'
       />
     </>
   );
 };
 
-const RadioField = (props: Props) => {
-  // type cast to RadioField
-  const fieldData = props.fieldData as IRadioField;
-  return (
-    <>
-      <label htmlFor={fieldData.label}>{fieldData.label}</label>
-      {fieldData.options.map((option: Option) => (
-        <div key={option.optionId}>
-          <input
-            type='radio'
-            name={fieldData.label}
-            id={option.optionId}
-            value={option.value}
-            className='mr-2'
-            onChange={props.updateFieldDataCB}
-          />
-          <label htmlFor={option.optionId}>{option.value}</label>
-        </div>
-      ))}
-    </>
-  );
-};
+// const RadioField = (props: Props) => {
+//   type Option = {
+//     value: string;
+//   };
+
+//   return (
+//     <>
+//       <label htmlFor={props.fieldData.label}>{props.fieldData.label}</label>
+//       {props.fieldData.options?.map((option: Option) => (
+//         <div key={option}>
+//           <input
+//             type='radio'
+//             name={props.fieldData.label}
+//             id={option.optionId}
+//             value={option.value}
+//             className='mr-2'
+//             onChange={props.updateFieldDataCB}
+//           />
+//           <label htmlFor={option.optionId}>{option.value}</label>
+//         </div>
+//       ))}
+//     </>
+//   );
+// };

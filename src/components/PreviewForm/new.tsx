@@ -1,11 +1,12 @@
 import { useEffect, useReducer } from "react";
 import { Pagination } from "../../types/common";
-import { Field, Form, Submission } from "../../types/formTypes";
+import { Field as IField, Form, Submission } from "../../types/formTypes";
 import { loadForm, loadFormFields } from "../../utils/apiUtils";
+import Field from "./Field";
 
 type State = {
   form: Form;
-  fields: Field[];
+  fields: IField[];
   submission: Submission;
   currentField: number;
 };
@@ -20,11 +21,6 @@ type UpdateFieldAction = {
   value: string;
 };
 
-// type UpdateMultiselectFieldAction = {
-//   type: "UPDATE_MULTISELECT_FIELD";
-//   selectedList: string[];
-// };
-
 type NextFieldAction = {
   type: "NEXT_FIELD";
 };
@@ -36,7 +32,6 @@ type PreviousFieldAction = {
 type FormAction =
   | Initializer
   | UpdateFieldAction
-  // | UpdateMultiselectFieldAction
   | NextFieldAction
   | PreviousFieldAction;
 
@@ -65,20 +60,7 @@ const reducer = (state: State, action: FormAction) => {
         },
       };
     }
-    // case "UPDATE_MULTISELECT_FIELD": {
-    //   let newResponseData = [...state.responseData];
 
-    //   // update the response data
-    //   newResponseData[state.currentField] = {
-    //     label: state.formData.fields[state.currentField].label,
-    //     value: action.selectedList,
-    //   };
-
-    //   return {
-    //     ...state,
-    //     responseData: newResponseData,
-    //   };
-    // }
     case "NEXT_FIELD": {
       return {
         ...state,
@@ -102,11 +84,11 @@ const getForm = async (id: number) => {
 };
 
 const getFields = async (id: number) => {
-  const fields: Pagination<Field> = await loadFormFields(id);
+  const fields: Pagination<IField> = await loadFormFields(id);
   return fields.results;
 };
 
-const prepareSubmission = (form: Form, fields: Field[]) => {
+const prepareSubmission = (form: Form, fields: IField[]) => {
   const submission: Submission = {
     form: form,
     answers: fields.map((field) => {
@@ -135,7 +117,7 @@ const loadInitialState = async (form_pk: number) => {
 export default function NewPreviewForm(props: { form_pk: number }) {
   const [state, dispatch] = useReducer(reducer, {
     form: {} as Form,
-    fields: [] as Field[],
+    fields: [] as IField[],
     submission: {} as Submission,
     currentField: 0,
   });
@@ -146,6 +128,8 @@ export default function NewPreviewForm(props: { form_pk: number }) {
     });
   }, [props.form_pk]);
 
+  const handleSubmit = () => console.log(state);
+
   return (
     <>
       <h1 className='text-center font-bold text-3xl'>{state.form.title}</h1>
@@ -153,27 +137,26 @@ export default function NewPreviewForm(props: { form_pk: number }) {
       <div className='my-4 border border-stone-500'></div>
       <div className='flex flex-col'>
         {state.fields.length > 0 ? (
-          // <Field
-          //   fieldData={state.formData.fields[state.currentField]}
-          //   responseData={state.responseData[state.currentField]}
-          //   updateFieldDataCB={(
-          //     event:
-          //       | React.ChangeEvent<HTMLInputElement>
-          //       | React.ChangeEvent<HTMLTextAreaElement>
-          //   ) => {
-          //     dispatch({
-          //       type: "UPDATE_FIELD",
-          //       value: (event.target as HTMLInputElement).value,
-          //     });
-          //   }}
-          //   updateMultiselectDataCB={(selectedList: string[]) => {
-          //     dispatch({
-          //       type: "UPDATE_MULTISELECT_FIELD",
-          //       selectedList: selectedList,
-          //     });
-          //   }}
-          // />
-          "Field Data"
+          <Field
+            fieldData={state.fields[state.currentField]}
+            responseData={state.submission["answers"][state.currentField]}
+            updateFieldDataCB={(
+              event:
+                | React.ChangeEvent<HTMLInputElement>
+                | React.ChangeEvent<HTMLTextAreaElement>
+            ) => {
+              dispatch({
+                type: "UPDATE_FIELD",
+                value: (event.target as HTMLInputElement).value,
+              });
+            }}
+            updateMultiselectDataCB={(value: string) => {
+              dispatch({
+                type: "UPDATE_FIELD",
+                value,
+              });
+            }}
+          />
         ) : state.fields.length === 0 ? (
           <div className='text-center'>No fields found</div>
         ) : (
@@ -207,7 +190,7 @@ export default function NewPreviewForm(props: { form_pk: number }) {
           </button>
         ) : state.currentField === state.fields.length - 1 ? (
           <button
-            // onClick={submitForm}
+            onClick={handleSubmit}
             className='p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600 text-center'
           >
             Submit
