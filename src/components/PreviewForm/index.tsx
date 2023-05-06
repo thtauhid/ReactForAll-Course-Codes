@@ -1,77 +1,28 @@
-import { useReducer } from "react";
-import { Form, ResponseField, FormResponse } from "../../types/oldFormTypes";
-import { navigate } from "raviger";
+import { useEffect, useReducer } from "react";
+import { Pagination } from "../../types/common";
+import { Field as IField, Form, Submission } from "../../types/formTypes";
+import {
+  loadForm,
+  loadFormFields,
+  submitSubmission,
+} from "../../utils/apiUtils";
 import Field from "./Field";
-import { v4 as uuidv4 } from "uuid";
 
-const loadFormFromLocalStorage = (formId: string) => {
-  const data = localStorage.getItem("forms");
-  if (!data) return navigate("/404");
-
-  // find the corresponding form of the id
-  const dataJSON = JSON.parse(data);
-  const form = dataJSON.find((form: Form) => form.formId === formId);
-  if (!form) return navigate("/404");
-
-  return form;
-};
-
-const loadInitialState = (formId: string) => {
-  const form = loadFormFromLocalStorage(formId);
-  return {
-    currentField: 0,
-    formData: form,
-    responseData: form.fields.map((field: ResponseField) => ({
-      label: field.label,
-      value: "",
-    })),
-  };
-};
-
-const saveFormResponseToLocalStorage = (state: Prop) => {
-  try {
-    // compile form meta data and response data
-    const formResponse: FormResponse = {
-      responseId: uuidv4(),
-      formId: state.formData.formId,
-      fields: state.responseData,
-    };
-
-    // get form responses from localstorage
-    const data = localStorage.getItem("responses");
-
-    // if there are no responses, create a new array
-    if (!data) {
-      localStorage.setItem("responses", JSON.stringify([formResponse]));
-    } else {
-      // if there are responses, add the new response to the array
-      const dataJSON = JSON.parse(data);
-      dataJSON.push(formResponse);
-      localStorage.setItem("responses", JSON.stringify(dataJSON));
-    }
-
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
-
-type Prop = {
+type State = {
+  form: Form;
+  fields: IField[];
+  submission: Submission;
   currentField: number;
-  formData: Form;
-  responseData: ResponseField[];
+};
+
+type Initializer = {
+  type: "INITIALIZE";
+  payload: State;
 };
 
 type UpdateFieldAction = {
   type: "UPDATE_FIELD";
-  // label: string;
   value: string;
-};
-
-type UpdateMultiselectFieldAction = {
-  type: "UPDATE_MULTISELECT_FIELD";
-  selectedList: string[];
 };
 
 type NextFieldAction = {
@@ -83,41 +34,37 @@ type PreviousFieldAction = {
 };
 
 type FormAction =
+  | Initializer
   | UpdateFieldAction
-  | UpdateMultiselectFieldAction
   | NextFieldAction
   | PreviousFieldAction;
 
-const reducer = (state: Prop, action: FormAction) => {
+const reducer = (state: State, action: FormAction) => {
   switch (action.type) {
+    case "INITIALIZE":
+      return {
+        ...state,
+        ...action.payload,
+      };
+
     case "UPDATE_FIELD": {
-      let newResponseData = [...state.responseData];
+      let updatedAnswers = [...state.submission.answers];
 
       // update the response data
-      newResponseData[state.currentField] = {
-        label: state.formData.fields[state.currentField].label,
+      updatedAnswers[state.currentField] = {
+        form_field: state.fields[state.currentField].id!,
         value: action.value,
       };
 
       return {
         ...state,
-        responseData: newResponseData,
+        submission: {
+          ...state.submission,
+          answers: updatedAnswers,
+        },
       };
     }
-    case "UPDATE_MULTISELECT_FIELD": {
-      let newResponseData = [...state.responseData];
 
-      // update the response data
-      newResponseData[state.currentField] = {
-        label: state.formData.fields[state.currentField].label,
-        value: action.selectedList,
-      };
-
-      return {
-        ...state,
-        responseData: newResponseData,
-      };
-    }
     case "NEXT_FIELD": {
       return {
         ...state,
@@ -135,58 +82,77 @@ const reducer = (state: Prop, action: FormAction) => {
   }
 };
 
-export default function PreviewForm(props: { formId: string }) {
-  const [state, dispatch] = useReducer(reducer, null, () =>
-    loadInitialState(props.formId)
-  );
+const getForm = async (id: number) => {
+  const form: Form = await loadForm(id);
+  return form;
+};
 
-  // submit form
-  const submitForm = () => {
-    const isFormSaved = saveFormResponseToLocalStorage(state);
+const getFields = async (id: number) => {
+  const fields: Pagination<IField> = await loadFormFields(id);
+  return fields.results;
+};
 
-    if (isFormSaved) {
-      alert("Form submitted!");
-      navigate("/");
-    } else {
-      alert("Error submitting form!");
-    }
+const prepareSubmission = (form: Form, fields: IField[]) => {
+  const submission: Submission = {
+    form: form,
+    answers: fields.map((field) => {
+      return {
+        form_field: field.id!,
+        value: "",
+      };
+    }),
   };
+  return submission;
+};
 
-  // check if all the multiselect fields have at least two option in it
-  const checkMultiValueFieldHasAtleastTwoOptions = () => {
-    // if there are multiselect fields, check if they have at least two options
-    let check = true;
-    state.formData.fields.forEach((field) => {
-      if (
-        (field.kind === "dropdown" || field.kind === "radio") &&
-        field.options.length < 2
-      )
-        check = false;
+const loadInitialState = async (form_pk: number) => {
+  const form = await getForm(form_pk);
+  const fields = await getFields(form_pk);
+  const submission = prepareSubmission(form, fields);
+
+  return {
+    form,
+    fields,
+    submission,
+    currentField: 0,
+  };
+};
+
+const submitForm = async (form_pk: number, submission: Submission) => {
+  const response = await submitSubmission(form_pk, submission);
+
+  console.log(response);
+  return response;
+};
+
+export default function PreviewForm(props: { form_pk: number }) {
+  const [state, dispatch] = useReducer(reducer, {
+    form: {} as Form,
+    fields: [] as IField[],
+    submission: {} as Submission,
+    currentField: 0,
+  });
+
+  useEffect(() => {
+    loadInitialState(props.form_pk).then((initialState) => {
+      dispatch({ type: "INITIALIZE", payload: initialState });
     });
+  }, [props.form_pk]);
 
-    return check;
+  const handleSubmit = () => {
+    submitForm(props.form_pk, state.submission);
   };
-
-  if (!checkMultiValueFieldHasAtleastTwoOptions())
-    return (
-      <div className='text-center'>
-        <h1 className='text-3xl font-bold'>Error</h1>
-        <div className='my-4 border border-stone-500'></div>
-        <div className='text-xl'>
-          The form is broken. Please contact the form creator.
-        </div>
-      </div>
-    );
 
   return (
     <>
-      <h1 className='text-center font-bold text-3xl'>{state.formData.title}</h1>
+      <h1 className='text-center font-bold text-3xl'>{state.form.title}</h1>
+      <p className='text-justify mt-2'>{state.form.description}</p>
       <div className='my-4 border border-stone-500'></div>
       <div className='flex flex-col'>
-        {state.responseData.length > 0 ? (
+        {state.fields.length > 0 ? (
           <Field
-            fieldData={state.formData.fields[state.currentField]}
-            responseData={state.responseData[state.currentField]}
+            fieldData={state.fields[state.currentField]}
+            responseData={state.submission["answers"][state.currentField]}
             updateFieldDataCB={(
               event:
                 | React.ChangeEvent<HTMLInputElement>
@@ -197,20 +163,21 @@ export default function PreviewForm(props: { formId: string }) {
                 value: (event.target as HTMLInputElement).value,
               });
             }}
-            updateMultiselectDataCB={(selectedList: string[]) => {
+            updateMultiselectDataCB={(value: string) => {
               dispatch({
-                type: "UPDATE_MULTISELECT_FIELD",
-                selectedList: selectedList,
+                type: "UPDATE_FIELD",
+                value,
               });
             }}
           />
-        ) : state.responseData.length === 0 ? (
+        ) : state.fields.length === 0 ? (
           <div className='text-center'>No fields found</div>
         ) : (
           <div className='text-center'>Loading...</div>
         )}
       </div>
       <div className='my-4 border border-stone-500'></div>
+
       <div className='flex items-center justify-between'>
         {state.currentField === 0 ? (
           <div></div>
@@ -225,7 +192,7 @@ export default function PreviewForm(props: { formId: string }) {
           </button>
         )}
 
-        {state.currentField < state.formData.fields.length - 1 ? (
+        {state.currentField < state.fields.length - 1 ? (
           <button
             onClick={() => {
               dispatch({ type: "NEXT_FIELD" });
@@ -234,9 +201,9 @@ export default function PreviewForm(props: { formId: string }) {
           >
             Next
           </button>
-        ) : state.currentField === state.formData.fields.length - 1 ? (
+        ) : state.currentField === state.fields.length - 1 ? (
           <button
-            onClick={submitForm}
+            onClick={handleSubmit}
             className='p-2 text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600 text-center'
           >
             Submit

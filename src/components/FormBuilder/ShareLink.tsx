@@ -6,13 +6,13 @@ export default function ShareLink(props: { id: number }) {
       <input
         type='text'
         className='flex-1 ml-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
-        value={`http://localhost:3000/view/${props.id}`}
+        value={`http://localhost:3000/preview/${props.id}`}
         readOnly
       />
       <Link
         type='button'
         className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
-        href={`/view/${props.id}`}
+        href={`/preview/${props.id}`}
         target='_blank'
       >
         <svg
