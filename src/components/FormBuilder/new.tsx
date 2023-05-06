@@ -34,6 +34,16 @@ export default function NewFormBuilder(props: { form_pk: number }) {
       <p className='mt-2 text-justify'>{form?.description}</p>
 
       <div className='mt-4 border border-stone-500'></div>
+
+      {
+        /* Show message if no field are there */
+
+        fields.length === 0 && (
+          <div className='flex justify-center items-center h-32'>
+            <p className='text-2xl text-gray-500'>No fields added yet</p>
+          </div>
+        )
+      }
       {fields.map((field) => {
         return <Field key={field.id} form_pk={props.form_pk} data={field} />;
       })}
