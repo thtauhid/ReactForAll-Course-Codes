@@ -4,6 +4,7 @@ import { loadForm, loadFormFields } from "../../utils/apiUtils";
 import CreateField from "./CreateField";
 import { Pagination } from "../../types/common";
 import Field from "./Field";
+import ShareLink from "./ShareLink";
 
 const getForm = async (id: number, setFormCB: (value: Form) => void) => {
   const form: Form = await loadForm(id);
@@ -47,9 +48,12 @@ export default function FormBuilder(props: { form_pk: number }) {
       {fields.map((field) => {
         return <Field key={field.id} form_pk={props.form_pk} data={field} />;
       })}
-      <div className='mt-4 border border-stone-500'></div>
 
       <CreateField {...props} />
+
+      <div className='mt-4 border border-stone-500'></div>
+
+      <ShareLink id={props.form_pk} />
     </div>
   );
 }
