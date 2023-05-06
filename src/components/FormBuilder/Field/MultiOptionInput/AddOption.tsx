@@ -3,6 +3,7 @@ import { Field } from "../../../../types/formTypes";
 import { addOption } from "../../../../utils/apiUtils";
 
 type Props = {
+  form_pk: number;
   data: Field;
 };
 
@@ -27,7 +28,7 @@ export default function AddOption(props: Props) {
       updatedOptions = [option];
     } else updatedOptions = [...props.data.options!, option];
 
-    addNewOption(51, props.data.id!, updatedOptions);
+    addNewOption(props.form_pk, props.data.id!, updatedOptions);
   };
   return (
     <form
