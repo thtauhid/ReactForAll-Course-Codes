@@ -55,7 +55,7 @@ function FormCard(props: { formData: Form }) {
       <div className='flex'>
         <Link
           className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
-          href={`/form/${props.formData.id}`}
+          href={`/forms/${props.formData.id}`}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
