@@ -24,8 +24,8 @@ export default function Field(props: Props) {
       return <TextFields {...props} />;
     case "DROPDOWN":
       return <DropdownField {...props} />;
-    // case "RADIO":
-    //   return <RadioField {...props} />;
+    case "RADIO":
+      return <RadioField {...props} />;
     default:
       return <div></div>;
   }
@@ -82,27 +82,23 @@ const DropdownField = (props: Props) => {
   );
 };
 
-// const RadioField = (props: Props) => {
-//   type Option = {
-//     value: string;
-//   };
-
-//   return (
-//     <>
-//       <label htmlFor={props.fieldData.label}>{props.fieldData.label}</label>
-//       {props.fieldData.options?.map((option: Option) => (
-//         <div key={option}>
-//           <input
-//             type='radio'
-//             name={props.fieldData.label}
-//             id={option.optionId}
-//             value={option.value}
-//             className='mr-2'
-//             onChange={props.updateFieldDataCB}
-//           />
-//           <label htmlFor={option.optionId}>{option.value}</label>
-//         </div>
-//       ))}
-//     </>
-//   );
-// };
+const RadioField = (props: Props) => {
+  return (
+    <>
+      <label htmlFor={props.fieldData.label}>{props.fieldData.label}</label>
+      {props.fieldData.options?.map((option: string) => (
+        <div key={option}>
+          <input
+            type='radio'
+            name={props.fieldData.label}
+            id={option}
+            value={option}
+            className='mr-2'
+            onChange={props.updateFieldDataCB}
+          />
+          <label htmlFor={option}>{option}</label>
+        </div>
+      ))}
+    </>
+  );
+};

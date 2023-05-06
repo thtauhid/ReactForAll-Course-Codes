@@ -1,7 +1,11 @@
 import { useEffect, useReducer } from "react";
 import { Pagination } from "../../types/common";
 import { Field as IField, Form, Submission } from "../../types/formTypes";
-import { loadForm, loadFormFields } from "../../utils/apiUtils";
+import {
+  loadForm,
+  loadFormFields,
+  submitSubmission,
+} from "../../utils/apiUtils";
 import Field from "./Field";
 
 type State = {
@@ -114,6 +118,13 @@ const loadInitialState = async (form_pk: number) => {
   };
 };
 
+const submitForm = async (form_pk: number, submission: Submission) => {
+  const response = await submitSubmission(form_pk, submission);
+
+  console.log(response);
+  return response;
+};
+
 export default function NewPreviewForm(props: { form_pk: number }) {
   const [state, dispatch] = useReducer(reducer, {
     form: {} as Form,
@@ -128,7 +139,9 @@ export default function NewPreviewForm(props: { form_pk: number }) {
     });
   }, [props.form_pk]);
 
-  const handleSubmit = () => console.log(state);
+  const handleSubmit = () => {
+    submitForm(props.form_pk, state.submission);
+  };
 
   return (
     <>
