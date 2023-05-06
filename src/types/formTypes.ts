@@ -13,6 +13,17 @@ export type Field = {
   value?: string;
 };
 
+export type Answer = {
+  id?: number;
+  form_field: number;
+  value: string;
+};
+
+export type Submission = {
+  answers: Answer[];
+  form: Form;
+};
+
 export type Error<T> = Partial<Record<keyof T, string>>;
 
 export const validateForm = (form: Form) => {
