@@ -65,12 +65,16 @@ export const loadForm = async (id: number) => {
   return form;
 };
 
+export const loadFormFields = async (form_pk: number) => {
+  return await request(`forms/${form_pk}/fields/`, "GET");
+};
+
 export const createNewField = async (form_pk: number, field: any) => {
   return await request(`forms/${form_pk}/fields/`, "POST", field);
 };
 
-export const loadFormFields = async (form_pk: number) => {
-  return await request(`forms/${form_pk}/fields/`, "GET");
+export const deleteField = async (form_pk: number, id: number) => {
+  return await request(`forms/${form_pk}/fields/${id}/`, "DELETE");
 };
 
 export const updateLabel = async (
