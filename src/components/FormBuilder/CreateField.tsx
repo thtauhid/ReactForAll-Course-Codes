@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { Field } from "../../types/formTypes";
-import { createNewField } from "../../utils/apiUtils";
 
-const addField = async (form_pk: number, field: Field) => {
-  const response = await createNewField(form_pk, field);
-  console.log(response);
-};
-
-export default function CreateField(props: { form_pk: number }) {
+export default function CreateField(props: {
+  createFieldCB: (field: Field) => void;
+}) {
   const [newField, setNewField] = useState<Field>({
     kind: "TEXT",
     label: "",
@@ -24,7 +20,7 @@ export default function CreateField(props: { form_pk: number }) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    addField(props.form_pk, newField);
+    props.createFieldCB(newField);
 
     setNewField({ kind: "TEXT", label: "" });
   };

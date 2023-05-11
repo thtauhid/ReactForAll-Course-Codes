@@ -23,6 +23,10 @@ type UpdateDescriptionAction = {
 };
 
 // create field
+type CreateFieldAction = {
+  type: "CREATE_FIELD";
+  field: Field;
+};
 
 // delete field
 
@@ -34,7 +38,11 @@ type UpdateDescriptionAction = {
 
 // update option
 
-type FormActions = Initializer | UpdateTitleAction | UpdateDescriptionAction;
+type FormActions =
+  | Initializer
+  | UpdateTitleAction
+  | UpdateDescriptionAction
+  | CreateFieldAction;
 
 export const reducer = (state: State, action: FormActions) => {
   switch (action.type) {
@@ -57,6 +65,12 @@ export const reducer = (state: State, action: FormActions) => {
           ...state.form,
           description: action.value,
         },
+      };
+
+    case "CREATE_FIELD":
+      return {
+        ...state,
+        fields: [...state.fields, action.field],
       };
 
     default:

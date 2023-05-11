@@ -6,7 +6,11 @@ import { Pagination } from "../../types/common";
 import Field from "./Field";
 import ShareLink from "./ShareLink";
 import { reducer } from "./reducer";
-import { updateTitle, updateDescription } from "../../utils/apiUtils";
+import {
+  updateTitle,
+  updateDescription,
+  createNewField,
+} from "../../utils/apiUtils";
 
 type State = {
   form: Form;
@@ -63,6 +67,23 @@ export default function FormBuilder(props: { form_pk: number }) {
       });
   };
 
+  const createFieldCB = (state: State, field: IField) => {
+    // update in state
+    dispatch({
+      type: "CREATE_FIELD",
+      field,
+    });
+
+    // update in backend
+    createNewField(state.form.id!, field)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -106,7 +127,11 @@ export default function FormBuilder(props: { form_pk: number }) {
         return <Field key={field.id} form_pk={props.form_pk} data={field} />;
       })}
 
-      <CreateField {...props} />
+      <CreateField
+        createFieldCB={(field: IField) => {
+          createFieldCB(state, field);
+        }}
+      />
 
       <div className='mt-4 border border-stone-500'></div>
 
