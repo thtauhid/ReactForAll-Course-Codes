@@ -1,5 +1,4 @@
 import { Field, Form } from "../../types/formTypes";
-import { updateTitle } from "../../utils/apiUtils";
 
 type State = {
   form: Form;
@@ -16,6 +15,20 @@ type UpdateTitleAction = {
   value: string;
 };
 
+// update description
+
+// create field
+
+// delete field
+
+// update label
+
+// add option
+
+// delete option
+
+// update option
+
 type FormActions = Initializer | UpdateTitleAction;
 
 export const reducer = (state: State, action: FormActions) => {
@@ -23,10 +36,6 @@ export const reducer = (state: State, action: FormActions) => {
     case "INITIALIZE":
       return action.payload;
     case "UPDATE_TITLE":
-      updateTitle(state.form.id!, action.value).catch((err) => {
-        console.log(err);
-      });
-
       return {
         ...state,
         form: {

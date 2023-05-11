@@ -6,6 +6,12 @@ import { Pagination } from "../../types/common";
 import Field from "./Field";
 import ShareLink from "./ShareLink";
 import { reducer } from "./reducer";
+import { updateTitle } from "../../utils/apiUtils";
+
+type State = {
+  form: Form;
+  fields: IField[];
+};
 
 const loadInitialState = async (form_pk: number) => {
   const form: Form = await loadForm(form_pk);
@@ -23,6 +29,23 @@ export default function FormBuilder(props: { form_pk: number }) {
     fields: [] as IField[],
   });
 
+  const updateTitleCB = (state: State, value: string) => {
+    // update in state
+    dispatch({
+      type: "UPDATE_TITLE",
+      value,
+    });
+
+    // update in backend
+    updateTitle(state.form.id!, value)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -34,10 +57,7 @@ export default function FormBuilder(props: { form_pk: number }) {
       <input
         value={state.form.title}
         onChange={(e) => {
-          dispatch({
-            type: "UPDATE_TITLE",
-            value: e.target.value,
-          });
+          updateTitleCB(state, e.target.value);
         }}
         placeholder='Title'
         type='text'
