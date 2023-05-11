@@ -13,6 +13,7 @@ type State = {
   fields: IField[];
   submission: Submission;
   currentField: number;
+  isLoading: boolean;
 };
 
 type Initializer = {
@@ -115,6 +116,7 @@ const loadInitialState = async (form_pk: number) => {
     fields,
     submission,
     currentField: 0,
+    isLoading: false,
   };
 };
 
@@ -131,6 +133,7 @@ export default function PreviewForm(props: { form_pk: number }) {
     fields: [] as IField[],
     submission: {} as Submission,
     currentField: 0,
+    isLoading: true,
   });
 
   useEffect(() => {
@@ -142,6 +145,8 @@ export default function PreviewForm(props: { form_pk: number }) {
   const handleSubmit = () => {
     submitForm(props.form_pk, state.submission);
   };
+
+  if (state.isLoading) return <div className='text-center'>Loading...</div>;
 
   return (
     <>
