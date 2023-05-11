@@ -10,6 +10,7 @@ import {
   updateTitle,
   updateDescription,
   createNewField,
+  deleteField,
 } from "../../utils/apiUtils";
 
 type State = {
@@ -84,6 +85,23 @@ export default function FormBuilder(props: { form_pk: number }) {
       });
   };
 
+  const deleteFieldCB = (state: State, id: IField["id"]) => {
+    // update in state
+    dispatch({
+      type: "DELETE_FIELD",
+      id: id!,
+    });
+
+    // update in backend
+    deleteField(state.form.id!, id!)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -124,7 +142,16 @@ export default function FormBuilder(props: { form_pk: number }) {
         )
       }
       {state.fields.map((field) => {
-        return <Field key={field.id} form_pk={props.form_pk} data={field} />;
+        return (
+          <Field
+            key={field.id}
+            form_pk={props.form_pk}
+            data={field}
+            deleteFieldCB={(id: IField["id"]) => {
+              deleteFieldCB(state, id);
+            }}
+          />
+        );
       })}
 
       <CreateField

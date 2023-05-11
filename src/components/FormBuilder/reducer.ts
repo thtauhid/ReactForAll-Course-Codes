@@ -29,6 +29,10 @@ type CreateFieldAction = {
 };
 
 // delete field
+type DeleteFieldAction = {
+  type: "DELETE_FIELD";
+  id: number;
+};
 
 // update label
 
@@ -42,7 +46,8 @@ type FormActions =
   | Initializer
   | UpdateTitleAction
   | UpdateDescriptionAction
-  | CreateFieldAction;
+  | CreateFieldAction
+  | DeleteFieldAction;
 
 export const reducer = (state: State, action: FormActions) => {
   switch (action.type) {
@@ -71,6 +76,12 @@ export const reducer = (state: State, action: FormActions) => {
       return {
         ...state,
         fields: [...state.fields, action.field],
+      };
+
+    case "DELETE_FIELD":
+      return {
+        ...state,
+        fields: state.fields.filter((field) => field.id !== action.id),
       };
 
     default:

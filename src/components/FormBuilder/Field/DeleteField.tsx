@@ -1,19 +1,13 @@
 import { Field } from "../../../types/formTypes";
-import { deleteField } from "../../../utils/apiUtils";
 
 type Props = {
-  form_pk: number;
-  data: Field;
-};
-
-const deleteFormField = async (form_pk: number, field_pk: number) => {
-  const response = await deleteField(form_pk, field_pk);
-  console.log(response);
+  field_pk: Field["id"];
+  deleteFieldCB: (field_pk: Field["id"]) => void;
 };
 
 export default function DeleteButton(props: Props) {
   const handleDelete = async () => {
-    await deleteFormField(props.form_pk, props.data.id!);
+    props.deleteFieldCB(props.field_pk);
   };
 
   return (

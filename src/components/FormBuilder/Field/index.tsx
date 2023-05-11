@@ -6,6 +6,7 @@ import DeleteButton from "./DeleteField";
 type Props = {
   form_pk: number;
   data: IField;
+  deleteFieldCB: (field_pk: IField["id"]) => void;
 };
 
 export default function Field(props: Props) {
@@ -14,14 +15,20 @@ export default function Field(props: Props) {
       return (
         <div className='flex my-8'>
           <TextInput {...props} />
-          <DeleteButton {...props} />
+          <DeleteButton
+            field_pk={props.data.id}
+            deleteFieldCB={props.deleteFieldCB}
+          />
         </div>
       );
     case "DROPDOWN":
       return (
         <div className='flex my-8'>
           <MultiOptionInput {...props} />
-          <DeleteButton {...props} />
+          <DeleteButton
+            field_pk={props.data.id}
+            deleteFieldCB={props.deleteFieldCB}
+          />
         </div>
       );
 
@@ -29,7 +36,10 @@ export default function Field(props: Props) {
       return (
         <div className='flex my-8'>
           <MultiOptionInput {...props} />
-          <DeleteButton {...props} />
+          <DeleteButton
+            field_pk={props.data.id}
+            deleteFieldCB={props.deleteFieldCB}
+          />
         </div>
       );
     default:
