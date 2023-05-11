@@ -6,7 +6,7 @@ import { Pagination } from "../../types/common";
 import Field from "./Field";
 import ShareLink from "./ShareLink";
 import { reducer } from "./reducer";
-import { updateTitle } from "../../utils/apiUtils";
+import { updateTitle, updateDescription } from "../../utils/apiUtils";
 
 type State = {
   form: Form;
@@ -46,6 +46,23 @@ export default function FormBuilder(props: { form_pk: number }) {
       });
   };
 
+  const updateDescriptionCB = (state: State, value: string) => {
+    // update in state
+    dispatch({
+      type: "UPDATE_DESCRIPTION",
+      value,
+    });
+
+    // update in backend
+    updateDescription(state.form.id!, value)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -63,7 +80,16 @@ export default function FormBuilder(props: { form_pk: number }) {
         type='text'
         className='text-2xl p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
       />
-      <p className='mt-2 text-justify'>{state.form.description}</p>
+      <p className='mt-2 text-justify'>
+        <textarea
+          rows={5}
+          value={state.form.description}
+          onChange={(e) => {
+            updateDescriptionCB(state, e.target.value);
+          }}
+          className='p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+        />
+      </p>
 
       <div className='mt-4 border border-stone-500'></div>
 

@@ -10,12 +10,17 @@ type Initializer = {
   payload: State;
 };
 
+// update title
 type UpdateTitleAction = {
   type: "UPDATE_TITLE";
   value: string;
 };
 
 // update description
+type UpdateDescriptionAction = {
+  type: "UPDATE_DESCRIPTION";
+  value: string;
+};
 
 // create field
 
@@ -29,12 +34,13 @@ type UpdateTitleAction = {
 
 // update option
 
-type FormActions = Initializer | UpdateTitleAction;
+type FormActions = Initializer | UpdateTitleAction | UpdateDescriptionAction;
 
 export const reducer = (state: State, action: FormActions) => {
   switch (action.type) {
     case "INITIALIZE":
       return action.payload;
+
     case "UPDATE_TITLE":
       return {
         ...state,
@@ -43,6 +49,16 @@ export const reducer = (state: State, action: FormActions) => {
           title: action.value,
         },
       };
+
+    case "UPDATE_DESCRIPTION":
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          description: action.value,
+        },
+      };
+
     default:
       return state;
   }

@@ -69,6 +69,10 @@ export const updateTitle = async (id: number, title: string) => {
   return await request(`forms/${id}/`, "PATCH", { title });
 };
 
+export const updateDescription = async (id: number, description: string) => {
+  return await request(`forms/${id}/`, "PATCH", { description });
+};
+
 export const loadFormFields = async (form_pk: number) => {
   return await request(`forms/${form_pk}/fields/`, "GET");
 };
