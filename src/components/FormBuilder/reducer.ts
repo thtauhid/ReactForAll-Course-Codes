@@ -42,6 +42,11 @@ type UpdateLabelAction = {
 };
 
 // add option
+type AddOptionAction = {
+  type: "ADD_OPTION";
+  id: number;
+  value: string;
+};
 
 // delete option
 type DeleteOptionAction = {
@@ -59,6 +64,7 @@ type FormActions =
   | CreateFieldAction
   | DeleteFieldAction
   | UpdateLabelAction
+  | AddOptionAction
   | DeleteOptionAction;
 
 export const reducer = (state: State, action: FormActions) => {
@@ -104,6 +110,20 @@ export const reducer = (state: State, action: FormActions) => {
             return {
               ...field,
               label: action.value,
+            };
+          }
+          return field;
+        }),
+      };
+
+    case "ADD_OPTION":
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.id === action.id) {
+            return {
+              ...field,
+              options: [...field.options!, action.value],
             };
           }
           return field;

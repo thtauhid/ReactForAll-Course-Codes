@@ -93,14 +93,6 @@ export const updateLabel = async (
   return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { label });
 };
 
-export const addOption = async (
-  form_pk: number,
-  id: number,
-  options: Field["options"]
-) => {
-  return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { options });
-};
-
 export const updateOptions = async (
   form_pk: number,
   id: number,

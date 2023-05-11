@@ -7,6 +7,7 @@ type Props = {
   data: IField;
   deleteFieldCB: (field_pk: IField["id"]) => void;
   updateLabelCB: (field_pk: IField["id"], value: string) => void;
+  addOptionCB: (field_pk: IField["id"], option: string) => void;
   deleteOptionCB: (field_pk: IField["id"], option: string) => void;
 };
 
@@ -22,6 +23,7 @@ export default function Field(props: Props) {
           />
         </div>
       );
+
     case "DROPDOWN":
       return (
         <div className='flex my-8'>

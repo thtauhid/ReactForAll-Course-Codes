@@ -4,6 +4,7 @@ import AddOption from "./AddOption";
 type Props = {
   data: Field;
   updateLabelCB: (id: number, label: string) => void;
+  addOptionCB: (field_pk: Field["id"], option: string) => void;
   deleteOptionCB: (field_pk: number, option: string) => void;
 };
 
@@ -51,7 +52,7 @@ export default function MultiOptionInput(props: Props) {
         );
       })}
 
-      {/* <AddOption {...props} /> */}
+      <AddOption {...props} />
     </div>
   );
 }

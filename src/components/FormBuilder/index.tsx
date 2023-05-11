@@ -122,6 +122,30 @@ export default function FormBuilder(props: { form_pk: number }) {
       });
   };
 
+  const addOptionCB = (state: State, id: IField["id"], option: string) => {
+    // update in state
+    dispatch({
+      type: "ADD_OPTION",
+      id: id!,
+      value: option,
+    });
+
+    // add the option in options array
+    const field = state.fields.find((field) => field.id === id);
+
+    let options: IField["options"];
+
+    // check if options is null
+    if (field!.options === null) {
+      options = [option];
+    } else {
+      options = [...field!.options!, option];
+    }
+
+    // update in backend
+    updateOptions(state.form.id!, id!, options);
+  };
+
   const deleteOptionCB = (state: State, id: IField["id"], option: string) => {
     // update in state
     dispatch({
@@ -187,6 +211,9 @@ export default function FormBuilder(props: { form_pk: number }) {
             }}
             updateLabelCB={(id: IField["id"], value: string) => {
               updateLabelCB(state, id, value);
+            }}
+            addOptionCB={(id: IField["id"], option: string) => {
+              addOptionCB(state, id, option);
             }}
             deleteOptionCB={(id: IField["id"], option: string) => {
               deleteOptionCB(state, id, option);
