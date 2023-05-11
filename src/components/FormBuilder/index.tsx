@@ -162,6 +162,33 @@ export default function FormBuilder(props: { form_pk: number }) {
     updateOptions(state.form.id!, id!, options);
   };
 
+  const updateOptionCB = (
+    state: State,
+    id: IField["id"],
+    old_value: string,
+    new_value: string
+  ) => {
+    // update in state
+    dispatch({
+      type: "UPDATE_OPTION",
+      id: id!,
+      old_value,
+      value: new_value,
+    });
+
+    // update in backend
+    const field = state.fields.find((field) => field.id === id);
+    const options = field!.options!.map((opt) => {
+      if (opt === old_value) {
+        return new_value;
+      } else {
+        return opt;
+      }
+    });
+
+    updateOptions(state.form.id!, id!, options);
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -217,6 +244,13 @@ export default function FormBuilder(props: { form_pk: number }) {
             }}
             deleteOptionCB={(id: IField["id"], option: string) => {
               deleteOptionCB(state, id, option);
+            }}
+            updateOptionCB={(
+              id: IField["id"],
+              old_value: string,
+              new_value: string
+            ) => {
+              updateOptionCB(state, id, old_value, new_value);
             }}
           />
         );

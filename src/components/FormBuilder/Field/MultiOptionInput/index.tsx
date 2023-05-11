@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import { Field } from "../../../../types/formTypes";
 import AddOption from "./AddOption";
 
@@ -6,6 +7,11 @@ type Props = {
   updateLabelCB: (id: number, label: string) => void;
   addOptionCB: (field_pk: Field["id"], option: string) => void;
   deleteOptionCB: (field_pk: number, option: string) => void;
+  updateOptionCB: (
+    field_pk: Field["id"],
+    old_value: string,
+    new_value: string
+  ) => void;
 };
 
 export default function MultiOptionInput(props: Props) {
@@ -37,12 +43,16 @@ export default function MultiOptionInput(props: Props) {
 
       {props.data.options?.map((option) => {
         return (
-          <div className='flex items-center' key={option}>
+          <div className='flex items-center' key={uuid()}>
             <input
               type='text'
               value={option}
+              onChange={(e) => {
+                props.updateOptionCB(props.data.id!, option, e.target.value);
+              }}
               className='p-2 border border-gray-300 mt-1 rounded-md focus:outline-none focus:border-blue-500 flex-1'
             />
+
             <DeleteOptionButton
               field={props}
               option={option}

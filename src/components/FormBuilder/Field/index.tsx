@@ -9,6 +9,11 @@ type Props = {
   updateLabelCB: (field_pk: IField["id"], value: string) => void;
   addOptionCB: (field_pk: IField["id"], option: string) => void;
   deleteOptionCB: (field_pk: IField["id"], option: string) => void;
+  updateOptionCB: (
+    field_pk: IField["id"],
+    old_value: string,
+    new_value: string
+  ) => void;
 };
 
 export default function Field(props: Props) {
