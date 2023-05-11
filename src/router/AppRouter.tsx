@@ -7,6 +7,7 @@ import Login from "../components/Login";
 import FormBuilder from "../components/FormBuilder";
 import PreviewForm from "../components/PreviewForm";
 import CreateForm from "../components/CreateForm";
+import Success from "../components/Success";
 
 const routes = {
   "/": () => <Forms />,
@@ -18,6 +19,7 @@ const routes = {
   "/preview/:formId": ({ formId }: { formId: string }) => (
     <PreviewForm form_pk={Number(formId)} />
   ),
+  "/success": () => <Success />,
   "/*": () => <ErrorPage />,
 };
 

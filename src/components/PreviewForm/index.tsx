@@ -7,6 +7,7 @@ import {
   submitSubmission,
 } from "../../utils/apiUtils";
 import Field from "./Field";
+import { navigate } from "raviger";
 
 type State = {
   form: Form;
@@ -143,7 +144,13 @@ export default function PreviewForm(props: { form_pk: number }) {
   }, [props.form_pk]);
 
   const handleSubmit = () => {
-    submitForm(props.form_pk, state.submission);
+    submitForm(props.form_pk, state.submission)
+      .then((response) => {
+        navigate("/success");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   if (state.isLoading) return <div className='text-center'>Loading...</div>;
