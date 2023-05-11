@@ -11,6 +11,8 @@ import {
   updateDescription,
   createNewField,
   deleteField,
+  updateLabel,
+  updateOptions,
 } from "../../utils/apiUtils";
 
 type State = {
@@ -102,6 +104,40 @@ export default function FormBuilder(props: { form_pk: number }) {
       });
   };
 
+  const updateLabelCB = (state: State, id: IField["id"], value: string) => {
+    // update in state
+    dispatch({
+      type: "UPDATE_LABEL",
+      id: id!,
+      value,
+    });
+
+    // update in backend
+    updateLabel(state.form.id!, id!, value)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deleteOptionCB = (state: State, id: IField["id"], option: string) => {
+    // update in state
+    dispatch({
+      type: "DELETE_OPTION",
+      id: id!,
+      value: option,
+    });
+
+    // remove the option from options array
+    const field = state.fields.find((field) => field.id === id);
+    const options = field!.options!.filter((opt) => opt !== option);
+
+    // update in backend
+    updateOptions(state.form.id!, id!, options);
+  };
+
   useEffect(() => {
     loadInitialState(props.form_pk).then((initialState) => {
       dispatch({ type: "INITIALIZE", payload: initialState });
@@ -145,10 +181,15 @@ export default function FormBuilder(props: { form_pk: number }) {
         return (
           <Field
             key={field.id}
-            form_pk={props.form_pk}
             data={field}
             deleteFieldCB={(id: IField["id"]) => {
               deleteFieldCB(state, id);
+            }}
+            updateLabelCB={(id: IField["id"], value: string) => {
+              updateLabelCB(state, id, value);
+            }}
+            deleteOptionCB={(id: IField["id"], option: string) => {
+              deleteOptionCB(state, id, option);
             }}
           />
         );

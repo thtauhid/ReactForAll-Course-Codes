@@ -35,10 +35,20 @@ type DeleteFieldAction = {
 };
 
 // update label
+type UpdateLabelAction = {
+  type: "UPDATE_LABEL";
+  id: number;
+  value: string;
+};
 
 // add option
 
 // delete option
+type DeleteOptionAction = {
+  type: "DELETE_OPTION";
+  id: number;
+  value: string;
+};
 
 // update option
 
@@ -47,7 +57,9 @@ type FormActions =
   | UpdateTitleAction
   | UpdateDescriptionAction
   | CreateFieldAction
-  | DeleteFieldAction;
+  | DeleteFieldAction
+  | UpdateLabelAction
+  | DeleteOptionAction;
 
 export const reducer = (state: State, action: FormActions) => {
   switch (action.type) {
@@ -82,6 +94,36 @@ export const reducer = (state: State, action: FormActions) => {
       return {
         ...state,
         fields: state.fields.filter((field) => field.id !== action.id),
+      };
+
+    case "UPDATE_LABEL":
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.id === action.id) {
+            return {
+              ...field,
+              label: action.value,
+            };
+          }
+          return field;
+        }),
+      };
+
+    case "DELETE_OPTION":
+      return {
+        ...state,
+        fields: state.fields.map((field) => {
+          if (field.id === action.id) {
+            return {
+              ...field,
+              options: field.options!.filter(
+                (option) => option !== action.value
+              ),
+            };
+          }
+          return field;
+        }),
       };
 
     default:

@@ -101,7 +101,7 @@ export const addOption = async (
   return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { options });
 };
 
-export const deleteOption = async (
+export const updateOptions = async (
   form_pk: number,
   id: number,
   options: Field["options"]

@@ -4,9 +4,10 @@ import MultiOptionInput from "./MultiOptionInput";
 import DeleteButton from "./DeleteField";
 
 type Props = {
-  form_pk: number;
   data: IField;
   deleteFieldCB: (field_pk: IField["id"]) => void;
+  updateLabelCB: (field_pk: IField["id"], value: string) => void;
+  deleteOptionCB: (field_pk: IField["id"], option: string) => void;
 };
 
 export default function Field(props: Props) {

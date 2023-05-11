@@ -1,37 +1,21 @@
 import { Field } from "../../../../types/formTypes";
-import { useEffect, useState } from "react";
-import { deleteOption, updateLabel } from "../../../../utils/apiUtils";
 import AddOption from "./AddOption";
 
 type Props = {
-  form_pk: number;
   data: Field;
-};
-
-const updateFormLabel = async (form_pk: number, id: number, label: string) => {
-  const update = await updateLabel(form_pk, id, label);
-  console.log(update);
+  updateLabelCB: (id: number, label: string) => void;
+  deleteOptionCB: (field_pk: number, option: string) => void;
 };
 
 export default function MultiOptionInput(props: Props) {
-  const [label, setLabel] = useState(props.data.label);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateFormLabel(props.form_pk, props.data.id!, label);
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, [label, props.data.id, props.form_pk]);
-
   return (
     <div className='flex flex-col p-2 border border-gray-600 rounded-md focus:outline-none focus:border-blue-500 flex-1'>
       <p className='m-2 text-stone-600'>{props.data.kind}</p>
       <input
         type='text'
-        value={label}
+        value={props.data.label}
         onChange={(e) => {
-          setLabel(e.target.value);
+          props.updateLabelCB(props.data.id!, e.target.value);
         }}
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
       />
@@ -58,41 +42,27 @@ export default function MultiOptionInput(props: Props) {
               value={option}
               className='p-2 border border-gray-300 mt-1 rounded-md focus:outline-none focus:border-blue-500 flex-1'
             />
-            <DeleteOptionButton field={props} option={option} />
+            <DeleteOptionButton
+              field={props}
+              option={option}
+              deleteOptionCB={props.deleteOptionCB}
+            />
           </div>
         );
       })}
 
-      <AddOption {...props} />
+      {/* <AddOption {...props} /> */}
     </div>
   );
 }
-const deleteFieldOption = async (
-  form_pk: number,
-  field_id: number,
-  option: Field["options"]
-) => {
-  const data = await deleteOption(form_pk, field_id, option);
-  console.log(data);
-};
 
-const DeleteOptionButton = (props: { field: Props; option: string }) => {
+const DeleteOptionButton = (props: {
+  field: Props;
+  option: string;
+  deleteOptionCB: (field_pk: number, option: string) => void;
+}) => {
   const handleDelete = async () => {
-    // get old options
-    const options = props.field.data.options;
-    // remove the current option
-    const updatedOptions = options?.filter((option) => {
-      console.log(option, props.option);
-      return option !== props.option;
-    });
-
-    console.log(updatedOptions);
-
-    await deleteFieldOption(
-      props.field.form_pk,
-      props.field.data.id!,
-      updatedOptions!
-    );
+    props.deleteOptionCB(props.field.data.id!, props.option);
   };
 
   return (
