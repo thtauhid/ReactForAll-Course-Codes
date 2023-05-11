@@ -29,21 +29,18 @@ export default function MultiOptionInput(props: Props) {
 
       {
         /* Check if options is not null */
-        props.data.options ? (
-          /* Check if options is not empty */
-          props.data.options.length > 0 && (
-            <b className='m-2 text-stone-600'>Options</b>
-          )
-        ) : (
-          <div className='bg-red-500 text-white p-2 rounded my-4'>
-            Options not yet added
-          </div>
-        )
+        props.data.options && <b className='my-2 text-stone-600'>Options</b>
       }
 
       {props.data.options?.map((option) => {
         return (
-          <div className='flex items-center' key={uuid()}>
+          <div
+            className='flex items-center'
+            key={
+              // TODO: remove uuid as key
+              uuid()
+            }
+          >
             <input
               type='text'
               value={option}
@@ -61,6 +58,15 @@ export default function MultiOptionInput(props: Props) {
           </div>
         );
       })}
+
+      {
+        /* Check if options is not null */
+        props.data.options && props.data.options.length < 2 && (
+          <span className='bg-red-500 text-sm text-white p-2 rounded my-2'>
+            Minimum 2 options required
+          </span>
+        )
+      }
 
       <AddOption {...props} />
     </div>

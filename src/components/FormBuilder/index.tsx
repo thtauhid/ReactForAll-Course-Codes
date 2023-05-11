@@ -27,6 +27,7 @@ const loadInitialState = async (form_pk: number) => {
   return {
     form,
     fields: fields.results,
+    isLoading: false,
   };
 };
 
@@ -34,6 +35,7 @@ export default function FormBuilder(props: { form_pk: number }) {
   const [state, dispatch] = useReducer(reducer, {
     form: {} as Form,
     fields: [] as IField[],
+    isLoading: true,
   });
 
   const updateTitleCB = (state: State, value: string) => {
@@ -71,16 +73,16 @@ export default function FormBuilder(props: { form_pk: number }) {
   };
 
   const createFieldCB = (state: State, field: IField) => {
-    // update in state
-    dispatch({
-      type: "CREATE_FIELD",
-      field,
-    });
-
     // update in backend
     createNewField(state.form.id!, field)
       .then((res) => {
         console.log(res);
+
+        // update in state
+        dispatch({
+          type: "CREATE_FIELD",
+          field: res,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -195,6 +197,10 @@ export default function FormBuilder(props: { form_pk: number }) {
     });
   }, [props.form_pk]);
 
+  if (state.isLoading) {
+    return <div className='text-center'>Loading...</div>;
+  }
+
   return (
     <div>
       <input
@@ -208,7 +214,7 @@ export default function FormBuilder(props: { form_pk: number }) {
       />
       <p className='mt-2 text-justify'>
         <textarea
-          rows={5}
+          rows={2}
           value={state.form.description}
           onChange={(e) => {
             updateDescriptionCB(state, e.target.value);

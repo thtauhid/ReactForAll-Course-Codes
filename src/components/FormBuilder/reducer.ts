@@ -3,6 +3,7 @@ import { Field, Form } from "../../types/formTypes";
 type State = {
   form: Form;
   fields: Field[];
+  isLoading: boolean;
 };
 
 type Initializer = {
@@ -128,10 +129,18 @@ export const reducer = (state: State, action: FormActions) => {
         ...state,
         fields: state.fields.map((field) => {
           if (field.id === action.id) {
-            return {
-              ...field,
-              options: [...field.options!, action.value],
-            };
+            // if options is undefined or null create new array and insert
+            if (!field.options) {
+              return {
+                ...field,
+                options: [action.value],
+              };
+            } else {
+              return {
+                ...field,
+                options: [...field.options, action.value],
+              };
+            }
           }
           return field;
         }),
