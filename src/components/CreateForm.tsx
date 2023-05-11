@@ -24,7 +24,7 @@ export default function CreateForm() {
 
     const response = await createForm(form);
 
-    navigate(`/form/${response.id}`);
+    navigate(`/forms/${response.id}`);
   };
 
   return (
