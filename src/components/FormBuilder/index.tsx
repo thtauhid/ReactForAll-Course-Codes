@@ -14,6 +14,8 @@ import {
   updateLabel,
   updateOptions,
 } from "../../utils/apiUtils";
+import Login from "../Login";
+import { User } from "../../types/userTypes";
 
 type State = {
   form: Form;
@@ -31,7 +33,10 @@ const loadInitialState = async (form_pk: number) => {
   };
 };
 
-export default function FormBuilder(props: { form_pk: number }) {
+export default function FormBuilder(props: {
+  form_pk: number;
+  currentUser: User;
+}) {
   const [state, dispatch] = useReducer(reducer, {
     form: {} as Form,
     fields: [] as IField[],
@@ -196,6 +201,17 @@ export default function FormBuilder(props: { form_pk: number }) {
       dispatch({ type: "INITIALIZE", payload: initialState });
     });
   }, [props.form_pk]);
+
+  if (props.currentUser.username === "") {
+    return (
+      <div>
+        <p className='bg-red-500 p-2 rounded text-white my-2'>
+          You must be logged in to create a form
+        </p>
+        <Login />
+      </div>
+    );
+  }
 
   if (state.isLoading) {
     return <div className='text-center'>Loading...</div>;

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Form, validateForm } from "../types/formTypes";
 import { createForm } from "../utils/apiUtils";
 import { navigate } from "raviger";
+import { User } from "../types/userTypes";
+import Login from "./Login";
 
-export default function CreateForm() {
+export default function CreateForm(props: { currentUser: User }) {
   const [form, setForm] = useState<Form>({
     title: "",
     description: "",
@@ -26,6 +28,17 @@ export default function CreateForm() {
 
     navigate(`/forms/${response.id}`);
   };
+
+  if (props.currentUser.username === "") {
+    return (
+      <div>
+        <p className='bg-red-500 p-2 rounded text-white my-2'>
+          You must be logged in to create a form
+        </p>
+        <Login />
+      </div>
+    );
+  }
 
   return (
     <form className='flex flex-col' onSubmit={handleSubmit}>

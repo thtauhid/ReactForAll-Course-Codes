@@ -12,7 +12,10 @@ const getCurrentUser = async (setCurrentUserCB: (value: User) => void) => {
 };
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<User>(null);
+  const [currentUser, setCurrentUser] = useState<User>({
+    username: "",
+    url: null,
+  });
 
   useEffect(() => {
     getCurrentUser(setCurrentUser);
@@ -22,7 +25,7 @@ function App() {
     <AppContainer>
       <div className='p-4 mx-auto my-10 bg-white shadow-lg rounded-xl w-[50%]'>
         <Header currentUser={currentUser} />
-        <AppRouter />
+        <AppRouter currentUser={currentUser} />
       </div>
     </AppContainer>
   );
