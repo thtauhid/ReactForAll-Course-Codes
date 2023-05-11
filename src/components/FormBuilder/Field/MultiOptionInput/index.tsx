@@ -61,7 +61,13 @@ export default function MultiOptionInput(props: Props) {
 
       {
         /* Check if options is not null */
-        props.data.options && props.data.options.length < 2 && (
+        props.data.options ? (
+          props.data.options.length < 2 && (
+            <span className='bg-red-500 text-sm text-white p-2 rounded my-2'>
+              Minimum 2 options required
+            </span>
+          )
+        ) : (
           <span className='bg-red-500 text-sm text-white p-2 rounded my-2'>
             Minimum 2 options required
           </span>
