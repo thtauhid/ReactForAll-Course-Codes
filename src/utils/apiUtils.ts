@@ -65,6 +65,10 @@ export const loadForm = async (id: number) => {
   return form;
 };
 
+export const updateTitle = async (id: number, title: string) => {
+  return await request(`forms/${id}/`, "PATCH", { title });
+};
+
 export const loadFormFields = async (form_pk: number) => {
   return await request(`forms/${form_pk}/fields/`, "GET");
 };
