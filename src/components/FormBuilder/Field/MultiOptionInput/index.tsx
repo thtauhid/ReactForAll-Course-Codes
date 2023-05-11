@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { Field } from "../../../../types/formTypes";
 import AddOption from "./AddOption";
 
@@ -32,15 +31,9 @@ export default function MultiOptionInput(props: Props) {
         props.data.options && <b className='my-2 text-stone-600'>Options</b>
       }
 
-      {props.data.options?.map((option) => {
+      {props.data.options?.map((option, idx) => {
         return (
-          <div
-            className='flex items-center'
-            key={
-              // TODO: remove uuid as key
-              uuid()
-            }
-          >
+          <div className='flex items-center' key={idx}>
             <input
               type='text'
               value={option}
