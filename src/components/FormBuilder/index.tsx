@@ -15,7 +15,7 @@ import {
   updateOptions,
 } from "../../utils/apiUtils";
 import Login from "../Login";
-import { User } from "../../types/userTypes";
+import { UserProfile } from "../../types/userTypes";
 
 type State = {
   form: Form;
@@ -35,7 +35,7 @@ const loadInitialState = async (form_pk: number) => {
 
 export default function FormBuilder(props: {
   form_pk: number;
-  currentUser: User;
+  currentUser: UserProfile;
 }) {
   const [state, dispatch] = useReducer(reducer, {
     form: {} as Form,

@@ -8,9 +8,9 @@ import FormBuilder from "../components/FormBuilder";
 import PreviewForm from "../components/PreviewForm";
 import CreateForm from "../components/CreateForm";
 import Success from "../components/Success";
-import { User } from "../types/userTypes";
+import { UserProfile } from "../types/userTypes";
 
-export default function AppRouter(props: { currentUser: User }) {
+export default function AppRouter(props: { currentUser: UserProfile }) {
   const routes = {
     "/": () => <Forms />,
     "/login": () => <Login />,

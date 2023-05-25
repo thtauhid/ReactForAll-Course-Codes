@@ -1,13 +1,13 @@
 import { ActiveLink, navigate } from "raviger";
 import logo from "./logo.svg";
-import { User } from "./types/userTypes";
+import { UserProfile } from "./types/userTypes";
 
 const menuItems = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
 ];
 
-export default function Header(props: { currentUser: User }) {
+export default function Header(props: { currentUser: UserProfile }) {
   return (
     <div className='flex gap-2 items-center'>
       <ActiveLink href='/'>

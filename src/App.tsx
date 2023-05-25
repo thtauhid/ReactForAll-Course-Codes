@@ -4,15 +4,17 @@ import AppContainer from "./AppContainer";
 import Header from "./Header";
 import AppRouter from "./router/AppRouter";
 import { me } from "./utils/apiUtils";
-import { User } from "./types/userTypes";
+import { UserProfile } from "./types/userTypes";
 
-const getCurrentUser = async (setCurrentUserCB: (value: User) => void) => {
+const getCurrentUser = async (
+  setCurrentUserCB: (value: UserProfile) => void
+) => {
   const currentUser = await me();
   setCurrentUserCB(currentUser);
 };
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<User>({
+  const [currentUser, setCurrentUser] = useState<UserProfile>({
     username: "",
     url: null,
   });

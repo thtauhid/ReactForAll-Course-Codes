@@ -1,21 +1,31 @@
 import { Pagination, PaginationParams } from "../types/common";
 import { Field, Form, Submission } from "../types/formTypes";
+import { User } from "../types/userTypes";
 
 const BASE_URL = "https://tsapi.coronasafe.live/api/";
 
 type RequestMethods = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
-
+type Payload =
+  | PaginationParams
+  | User
+  | Form
+  | Field
+  | { options: Field["options"] }
+  | { title: string }
+  | Submission
+  | { label: Field["label"] }
+  | {};
 export const request = async (
   endpoint: string,
   method: RequestMethods = "GET",
-  payload: any = {}
+  payload: Payload = {}
 ) => {
   let url;
 
   if (method === "GET") {
     const requestParams = payload
       ? `${Object.keys(payload)
-          .map((key) => `${key}=${payload[key]}`)
+          .map((key) => `${key}=${payload[key as keyof Payload]}`)
           .join("&")}`
       : "";
 
@@ -48,7 +58,8 @@ export const me = async () => {
 };
 
 export const login = async (username: string, password: string) => {
-  return await request("auth-token/", "POST", { username, password });
+  const user: User = { username, password };
+  return await request("auth-token/", "POST", user);
 };
 
 export const createForm = async (form: Form) => {
@@ -77,7 +88,7 @@ export const loadFormFields = async (form_pk: number) => {
   return await request(`forms/${form_pk}/fields/`, "GET");
 };
 
-export const createNewField = async (form_pk: number, field: any) => {
+export const createNewField = async (form_pk: number, field: Field) => {
   return await request(`forms/${form_pk}/fields/`, "POST", field);
 };
 
@@ -88,7 +99,7 @@ export const deleteField = async (form_pk: number, id: number) => {
 export const updateLabel = async (
   form_pk: number,
   id: number,
-  label: string
+  label: Field["label"]
 ) => {
   return await request(`forms/${form_pk}/fields/${id}/`, "PATCH", { label });
 };

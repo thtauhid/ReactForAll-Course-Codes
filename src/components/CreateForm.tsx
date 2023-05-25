@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Form, validateForm } from "../types/formTypes";
 import { createForm } from "../utils/apiUtils";
 import { navigate } from "raviger";
-import { User } from "../types/userTypes";
+import { UserProfile } from "../types/userTypes";
 import Login from "./Login";
 
-export default function CreateForm(props: { currentUser: User }) {
+export default function CreateForm(props: { currentUser: UserProfile }) {
   const [form, setForm] = useState<Form>({
     title: "",
     description: "",
