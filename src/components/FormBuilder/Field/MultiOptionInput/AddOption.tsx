@@ -27,6 +27,7 @@ export default function AddOption(props: Props) {
         value={option}
         onChange={(e) => setOption(e.target.value)}
         className='p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 flex-1'
+        placeholder='Enter new option'
       />
       <button
         type='submit'
