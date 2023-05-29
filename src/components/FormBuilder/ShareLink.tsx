@@ -19,7 +19,7 @@ export default function ShareLink(props: { id: number }) {
         onCopy={() => setCopied(true)}
       >
         <button
-          className={`ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none  ${
+          className={`ml-2 p-2 text-white bg-blue-500 rounded-md focus:outline-none focus:outline-black  ${
             copied ? "bg-green-500 hover:bg-green-600" : ""
           }`}
         >
@@ -33,7 +33,7 @@ export default function ShareLink(props: { id: number }) {
 
       <Link
         type='button'
-        className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+        className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 focus:outline-1 focus:outline-black'
         href={`/preview/${props.id}`}
         target='_blank'
       >

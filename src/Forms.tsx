@@ -47,7 +47,7 @@ export default function Forms() {
     <>
       <div className='flex justify-end my-4'>
         <Link
-          className='flex justify-center items-center p-3 bg-blue-500 rounded text-white'
+          className='flex justify-center items-center p-3 bg-blue-500 rounded text-white focus:outline-none focus:outline-black'
           href='/forms/create'
         >
           <PlusIcon className='h-6 w-6 mr-1' aria-hidden='true' /> Create Form
@@ -93,7 +93,7 @@ function FormCard(props: { formData: Form }) {
       <h2 className='text-xl'>{props.formData.title}</h2>
       <div className='flex'>
         <Link
-          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
+          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block focus:outline-none focus:outline-black'
           href={`/forms/${props.formData.id}`}
         >
           <PencilSquareIcon className='h-6 w-6' aria-hidden='true' />
@@ -101,7 +101,7 @@ function FormCard(props: { formData: Form }) {
         <Link
           href={`/preview/${props.formData.id}`}
           target='_blank'
-          className='ml-2 p-3 bg-blue-500 hover:bg-blue-700 rounded text-white'
+          className='ml-2 p-3 bg-blue-500 hover:bg-blue-700 rounded text-white focus:outline-none focus:outline-black'
         >
           <EyeIcon className='h-6 w-6' aria-hidden='true' />
         </Link>

@@ -85,7 +85,7 @@ const DeleteOptionButton = (props: {
   return (
     <button
       type='button'
-      className='ml-2 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600'
+      className='ml-2 p-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 focus:outline-1 focus:outline-black'
       onClick={handleDelete}
     >
       <TrashIcon className='h-6 w-6' aria-hidden='true' />

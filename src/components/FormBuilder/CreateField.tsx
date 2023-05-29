@@ -53,7 +53,7 @@ export default function CreateField(props: {
       />
       <button
         type='submit'
-        className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+        className='ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 focus:outline-1 focus:outline-black'
       >
         <PlusIcon className='h-6 w-6' aria-hidden='true' />
       </button>

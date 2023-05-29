@@ -31,7 +31,7 @@ export default function AddOption(props: Props) {
       />
       <button
         type='submit'
-        className='flex-1 ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600'
+        className='flex-1 ml-2 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 focus:outline-1 focus:outline-black'
       >
         Add Option
       </button>
