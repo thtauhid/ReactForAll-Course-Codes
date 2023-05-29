@@ -1,46 +1,97 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { Form } from "./types/formTypes";
 import { Link } from "raviger";
 import { listForms } from "./utils/apiUtils";
 import { Pagination } from "./types/common";
-import ReactPaginate from "react-paginate";
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
   EyeIcon,
   PencilSquareIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import InfiniteScroll from "react-infinite-scroller";
 
-const getForms = async (
-  limit: number,
-  offset: number,
-  setFormsCB: (value: Form[]) => void,
-  setCountCB: (value: number) => void
-) => {
+const getForms = async (limit: number, offset: number) => {
   const data: Pagination<Form> = await listForms({ limit, offset });
+  return data;
+};
 
-  setCountCB(data.count);
-  setFormsCB(data.results);
+const limit = 7; // number of forms to fetch at a time
+
+type State = {
+  forms: Form[];
+  offset: number;
+  count: number;
+};
+
+type Initializer = {
+  type: "INITIALIZE";
+  payload: { forms: Form[]; count: number };
+};
+
+type AddFormsAction = {
+  type: "ADD_FORMS";
+  payload: Form[];
+};
+
+type FormAction = Initializer | AddFormsAction;
+
+const reducer = (state: State, action: FormAction) => {
+  switch (action.type) {
+    case "INITIALIZE":
+      return {
+        ...state,
+        ...action.payload,
+        offset: limit,
+      };
+
+    case "ADD_FORMS":
+      return {
+        ...state,
+        forms: [...state.forms, ...action.payload],
+        offset: state.offset + limit,
+      };
+
+    default:
+      return state;
+  }
 };
 
 export default function Forms() {
-  const limit = 5;
-  const [offset, setOffset] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
-
-  const [forms, setForms] = useState<Form[]>([]);
+  const [state, dispatch] = useReducer(reducer, {
+    forms: [],
+    offset: 0,
+    count: 0,
+  });
 
   useEffect(() => {
-    getForms(limit, offset, setForms, setCount);
-  }, [limit, offset]);
+    getForms(limit, 0)
+      .then((data) => {
+        dispatch({
+          type: "INITIALIZE",
+          payload: {
+            forms: data.results,
+            count: data.count,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
-  const pageCount = Math.ceil(count / limit);
+  const newScroll = () => {
+    console.log("fetching data");
 
-  // Invoke when user click to request another page.
-  const handlePageClick = (selectedItem: { selected: number }) => {
-    const newOffset = (selectedItem.selected * limit) % count;
-    setOffset(newOffset);
+    getForms(limit, state.offset)
+      .then((data) => {
+        dispatch({
+          type: "ADD_FORMS",
+          payload: data.results,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -54,35 +105,24 @@ export default function Forms() {
         </Link>
       </div>
 
-      {forms.map((form) => (
-        <FormCard key={form.id} formData={form} />
-      ))}
-
-      <div className='flex justify-between items-center'>
-        <p>
-          Displaying {1 + offset} to{" "}
-          {limit + offset < count ? limit + offset : count} of {count}
-        </p>
-        <ReactPaginate
-          breakLabel='...'
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={1}
-          pageCount={pageCount}
-          previousLabel={
-            <ChevronLeftIcon className='h-5 w-5' aria-hidden='true' />
-          }
-          nextLabel={
-            <ChevronRightIcon className='h-5 w-5' aria-hidden='true' />
-          }
-          renderOnZeroPageCount={null}
-          containerClassName='isolate inline-flex -space-x-px rounded-md shadow-sm mt-5'
-          previousClassName='rounded-l p-2 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:bg-blue-500 hover:text-white'
-          pageClassName='px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex hover:bg-blue-500 hover:text-white'
-          nextClassName='rounded-r-md p-2 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 hover:bg-blue-500 hover:text-white'
-          breakClassName='px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex hover:bg-blue-500 hover:text-white'
-          activeClassName='bg-blue-800 text-white hover:bg-blue-800 hover:text-white'
-        />
-      </div>
+      <InfiniteScroll
+        loadMore={newScroll}
+        hasMore={state.forms.length < state.count && state.forms.length > 0}
+        loader={
+          <div
+            className='
+            flex justify-center items-center p-3 bg-blue-500 rounded text-white focus:outline-none focus:outline-black
+          '
+            key={0}
+          >
+            Loading ...
+          </div>
+        }
+      >
+        {state.forms.map((form) => (
+          <FormCard key={form.id} formData={form} />
+        ))}
+      </InfiniteScroll>
     </>
   );
 }
