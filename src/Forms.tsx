@@ -45,9 +45,16 @@ const reducer = (state: State, action: FormAction) => {
       };
 
     case "ADD_FORMS":
+      const forms = [...state.forms, ...action.payload];
+
+      // remove duplicates
+      const uniqueForms = forms.filter(
+        (form, index, self) => index === self.findIndex((f) => f.id === form.id)
+      );
+
       return {
         ...state,
-        forms: [...state.forms, ...action.payload],
+        forms: uniqueForms,
         offset: state.offset + limit,
       };
 
@@ -106,6 +113,7 @@ export default function Forms() {
       </div>
 
       <InfiniteScroll
+        className='overflow-auto'
         loadMore={newScroll}
         hasMore={state.forms.length < state.count && state.forms.length > 0}
         loader={
