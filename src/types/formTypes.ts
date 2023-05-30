@@ -1,67 +1,41 @@
-export type TextFieldTypes =
-  | "text"
-  | "email"
-  | "date"
-  | "tel"
-  | "number"
-  | "password"
-  | "textarea";
-
-export type FieldTypes = TextFieldTypes | "dropdown" | "radio";
-
-export type Option = {
-  optionId: string;
-  value: string;
-};
-
-export type TextField = {
-  kind: "text";
-  fieldId: string;
-  label: string;
-  fieldType: TextFieldTypes;
-  value: string;
-};
-
-export type DropdownField = {
-  kind: "dropdown";
-  fieldId: string;
-  label: string;
-  options: Option[];
-  value: string[];
-};
-
-export type RadioField = {
-  kind: "radio";
-  fieldId: string;
-  label: string;
-  options: Option[];
-  value: string;
-};
-
-export type FormField = TextField | DropdownField | RadioField;
-
-export interface Form {
-  formId: string;
+export type Form = {
+  id?: number;
   title: string;
-  fields: FormField[];
-}
+  description?: string;
+  is_public?: boolean;
+};
 
-// use for fields like text, email, date, tel, number, password, etc
-export type SingleValueResponseField = {
+export type Field = {
+  id?: number;
   label: string;
+  kind: "TEXT" | "DROPDOWN" | "RADIO";
+  options?: string[];
+  value?: string;
+};
+
+export type Answer = {
+  id?: number;
+  form_field: number;
   value: string;
 };
 
-// use for fields like dropdown and checkbox
-export type MultiValueResponseField = {
-  label: string;
-  value: string[];
+export type Submission = {
+  answers: Answer[];
+  form: Form;
 };
 
-export type ResponseField = SingleValueResponseField | MultiValueResponseField;
+export type Error<T> = Partial<Record<keyof T, string>>;
 
-export type FormResponse = {
-  responseId: string;
-  formId: string;
-  fields: ResponseField[];
+export const validateForm = (form: Form) => {
+  const errors: Error<Form> = {};
+
+  if (form.title.length < 1) {
+    errors.title = "Title is required";
+  }
+
+  if (form.title.length > 100) {
+    errors.title = "Title must be less than 100 characters";
+  }
+
+  return errors;
 };

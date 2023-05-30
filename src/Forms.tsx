@@ -1,217 +1,158 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { Form } from "./types/formTypes";
 import { Link } from "raviger";
-import { v4 as uuidv4 } from "uuid";
+import { listForms } from "./utils/apiUtils";
+import { Pagination } from "./types/common";
+import {
+  EyeIcon,
+  PencilSquareIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
+import InfiniteScroll from "react-infinite-scroller";
 
-const sampleFormData: Form[] = [
-  {
-    formId: uuidv4(),
-    title: "Test Form",
-    fields: [
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Full name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Enrolment Number",
-        fieldType: "number",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Phone Number",
-        fieldType: "tel",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Email",
-        fieldType: "email",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Password",
-        fieldType: "password",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Date of Birth",
-        fieldType: "date",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Comments",
-        fieldType: "textarea",
-        value: "",
-      },
-    ],
-  },
-  {
-    formId: uuidv4(),
-    title: "Personal Data Collection Form",
-    fields: [
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Full name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Fathers name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Mothers Name",
-        fieldType: "text",
-        value: "",
-      },
-      {
-        kind: "text",
-        fieldId: uuidv4(),
-        label: "Email",
-        fieldType: "email",
-        value: "",
-      },
-    ],
-  },
-];
+const getForms = async (limit: number, offset: number) => {
+  const data: Pagination<Form> = await listForms({ limit, offset });
+  return data;
+};
+
+const limit = 7; // number of forms to fetch at a time
+
+type State = {
+  forms: Form[];
+  offset: number;
+  count: number;
+};
+
+type Initializer = {
+  type: "INITIALIZE";
+  payload: { forms: Form[]; count: number };
+};
+
+type AddFormsAction = {
+  type: "ADD_FORMS";
+  payload: Form[];
+};
+
+type FormAction = Initializer | AddFormsAction;
+
+const reducer = (state: State, action: FormAction) => {
+  switch (action.type) {
+    case "INITIALIZE":
+      return {
+        ...state,
+        ...action.payload,
+        offset: limit,
+      };
+
+    case "ADD_FORMS":
+      const forms = [...state.forms, ...action.payload];
+
+      // remove duplicates
+      const uniqueForms = forms.filter(
+        (form, index, self) => index === self.findIndex((f) => f.id === form.id)
+      );
+
+      return {
+        ...state,
+        forms: uniqueForms,
+        offset: state.offset + limit,
+      };
+
+    default:
+      return state;
+  }
+};
 
 export default function Forms() {
-  const [forms, setForms] = useState<Form[]>([]);
+  const [state, dispatch] = useReducer(reducer, {
+    forms: [],
+    offset: 0,
+    count: 0,
+  });
 
   useEffect(() => {
-    const data = localStorage.getItem("forms");
-
-    if (!data) {
-      localStorage.setItem("forms", JSON.stringify(sampleFormData));
-    } else {
-      const dataJSON = JSON.parse(data);
-      setForms(dataJSON);
-    }
+    getForms(limit, 0)
+      .then((data) => {
+        dispatch({
+          type: "INITIALIZE",
+          payload: {
+            forms: data.results,
+            count: data.count,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
-  const addFormCB = () => {
-    const newForm: Form = {
-      formId: uuidv4(),
-      title: "Untitled Form",
-      fields: [],
-    };
-    const newForms = [...forms, newForm];
-    setForms(newForms);
-    localStorage.setItem("forms", JSON.stringify(newForms));
-  };
+  const newScroll = () => {
+    console.log("fetching data");
 
-  const deleteFormCB = (id: string) => {
-    const newForms = forms.filter((form) => form.formId !== id);
-    setForms(newForms);
-    localStorage.setItem("forms", JSON.stringify(newForms));
+    getForms(limit, state.offset)
+      .then((data) => {
+        dispatch({
+          type: "ADD_FORMS",
+          payload: data.results,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <>
-      {forms.map((form) => (
-        <FormCard
-          key={form.formId}
-          formData={form}
-          deleteFormCB={deleteFormCB}
-          addFormCB={addFormCB}
-        />
-      ))}
-
-      <button
-        className='flex justify-center items-center w-full p-3 bg-blue-500 rounded text-white'
-        onClick={addFormCB}
-      >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='w-6 h-6'
+      <div className='flex justify-end my-4'>
+        <Link
+          className='flex justify-center items-center p-3 bg-blue-500 rounded text-white focus:outline-none focus:outline-black'
+          href='/forms/create'
         >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M12 6v6m0 0v6m0-6h6m-6 0H6'
-          />
-        </svg>
-      </button>
+          <PlusIcon className='h-6 w-6 mr-1' aria-hidden='true' /> Create Form
+        </Link>
+      </div>
+
+      <InfiniteScroll
+        className='overflow-auto'
+        loadMore={newScroll}
+        hasMore={state.forms.length < state.count && state.forms.length > 0}
+        loader={
+          <div
+            className='
+            flex justify-center items-center p-3 bg-blue-500 rounded text-white focus:outline-none focus:outline-black
+          '
+            key={0}
+          >
+            Loading ...
+          </div>
+        }
+      >
+        {state.forms.map((form) => (
+          <FormCard key={form.id} formData={form} />
+        ))}
+      </InfiniteScroll>
     </>
   );
 }
 
-function FormCard(props: {
-  formData: Form;
-  deleteFormCB: (id: string) => void;
-  addFormCB: () => void;
-}) {
+function FormCard(props: { formData: Form }) {
   return (
     <div className='flex justify-between items-center p-4 my-2 bg-white rounded-xl border-stone-400 border-2 hover:bg-slate-200'>
       <h2 className='text-xl'>{props.formData.title}</h2>
       <div className='flex'>
         <Link
-          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block'
-          href={`/forms/${props.formData.formId}`}
+          className='p-3 bg-blue-500 hover:bg-blue-700 rounded text-white button inline-block focus:outline-none focus:outline-black'
+          href={`/forms/${props.formData.id}`}
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='w-6 h-6'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z'
-            />
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
-            />
-          </svg>
+          <PencilSquareIcon className='h-6 w-6' aria-hidden='true' />
         </Link>
-        <button
-          className='ml-2 p-3 bg-red-500 hover:bg-red-700 rounded text-white'
-          onClick={() => props.deleteFormCB(props.formData.formId)}
+        <Link
+          href={`/preview/${props.formData.id}`}
+          target='_blank'
+          className='ml-2 p-3 bg-blue-500 hover:bg-blue-700 rounded text-white focus:outline-none focus:outline-black'
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='w-6 h-6'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0'
-            />
-          </svg>
-        </button>
+          <EyeIcon className='h-6 w-6' aria-hidden='true' />
+        </Link>
       </div>
     </div>
   );
